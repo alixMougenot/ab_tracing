@@ -175,3 +175,51 @@ func DeletePlant(id string, ctx context.Context, pool *pgxpool.Pool) error {
 	_, err := pool.Exec(ctx, "DELETE FROM public.plant WHERE id = $1", id)
 	return err
 }
+
+func GetPlant(id string, ctx context.Context, pool *pgxpool.Pool) (*model.Plant, error) {
+	row := pool.QueryRow(ctx, `SELECT 
+	(id, aquisition_type, visibility, "source", grafting_sources,
+	maturation_sources, treatment_sources, planting_date, name_latin,
+  quantity, notes, aquisition_places, aquisition_bought, is_stock_plant,
+  "name", is_organic, unit)
+  FROM public.plant WHERE id = $1`, id)
+
+	var plant model.Plant
+	err := row.Scan(&plant.ID, &plant.AquisitionType, &plant.Visibility, &plant.PlantingSource,
+		&plant.GraftingSteps, &plant.MaturationSteps, &plant.TreatmentSteps, &plant.PlantingDate,
+		&plant.LatinName, &plant.Quantity, &plant.Notes, &plant.AquisitionPlaces,
+		&plant.AquisitionPurshaseInfo, &plant.IsStockPlant, &plant.Name, &plant.IsOrganic, &plant.Unit)
+	if err != nil {
+		return nil, err
+	}
+
+	return &plant, nil
+}
+
+func ListPlant(ctx context.Context, pool *pgxpool.Pool) ([]*model.Plant, error) {
+	rows, err := pool.Query(ctx, `SELECT 
+	id, aquisition_type, visibility, "source", grafting_sources,
+	maturation_sources, treatment_sources, planting_date, name_latin,
+	quantity, notes, aquisition_places, aquisition_bought, is_stock_plant,
+	"name", is_organic, unit
+	FROM public.plant`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	plants := make([]*model.Plant, 0, 10)
+	for rows.Next() {
+		var plant model.Plant
+		err := rows.Scan(&plant.ID, &plant.AquisitionType, &plant.Visibility, &plant.PlantingSource,
+			&plant.GraftingSteps, &plant.MaturationSteps, &plant.TreatmentSteps, &plant.PlantingDate,
+			&plant.LatinName, &plant.Quantity, &plant.Notes, &plant.AquisitionPlaces,
+			&plant.AquisitionPurshaseInfo, &plant.IsStockPlant, &plant.Name, &plant.IsOrganic, &plant.Unit)
+		if err != nil {
+			return nil, err
+		}
+		plants = append(plants, &plant)
+	}
+
+	return plants, nil
+}

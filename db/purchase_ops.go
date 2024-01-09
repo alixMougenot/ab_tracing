@@ -97,3 +97,35 @@ func DeleteSupplyInfo(id string, ctx context.Context, pool *pgxpool.Pool) error 
 	_, err := pool.Exec(ctx, "DELETE FROM public.supply_info WHERE id = $1", id)
 	return err
 }
+
+func GetSupplyInfo(id string, ctx context.Context, pool *pgxpool.Pool) (*model.SupplyInfo, error) {
+	row := pool.QueryRow(ctx, "SELECT id, visibility, \"name\", country, supplier, bill_link, notes FROM public.supply_info WHERE id = $1", id)
+	var ret model.SupplyInfo
+	err := row.Scan(&ret.ID, &ret.Visibility, &ret.Name, &ret.Country, &ret.Supplier, &ret.Bill, &ret.Notes)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func ListSupplyInfos(ctx context.Context, pool *pgxpool.Pool) ([]*model.SupplyInfo, error) {
+	rows, err := pool.Query(ctx, "SELECT id, visibility, \"name\", country, supplier, bill_link, notes FROM public.supply_info")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	ret := make([]*model.SupplyInfo, 0, 10)
+	for rows.Next() {
+		var tmp model.SupplyInfo
+		err := rows.Scan(&tmp.ID, &tmp.Visibility, &tmp.Name, &tmp.Country, &tmp.Supplier, &tmp.Bill, &tmp.Notes)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, &tmp)
+	}
+
+	return ret, nil
+}

@@ -140,3 +140,47 @@ func DeletePlantTreatment(id string, ctx context.Context, pool *pgxpool.Pool) er
 	_, err := pool.Exec(ctx, "DELETE FROM public.plant_treatments WHERE id = $1", id)
 	return err
 }
+
+func GetPlantTreatment(id string, ctx context.Context, pool *pgxpool.Pool) (*model.PlantTreatment, error) {
+	row := pool.QueryRow(ctx, `SELECT 
+	  (id, aquisition_type, visibility, production_ingredients, creation_date,
+		quantity, unit, notes, aquisition_places, aquisition_bought,
+		\"name\", is_organic_compatible)
+		FROM public.plant_treatments
+		WHERE id = $1`, id)
+	var plantTreatment model.PlantTreatment
+	err := row.Scan(&plantTreatment.ID, &plantTreatment.AquisitionType, &plantTreatment.Visibility,
+		&plantTreatment.HomeProductionIngredients, &plantTreatment.CreationDate, &plantTreatment.Quantity,
+		&plantTreatment.Unit, &plantTreatment.Notes, &plantTreatment.AquisitionPlaces,
+		&plantTreatment.AquisitionPurshaseInfo, &plantTreatment.Name, &plantTreatment.IsOrganicCompliant)
+	if err != nil {
+		return nil, err
+	}
+	return &plantTreatment, nil
+}
+
+func ListPlantTreatments(ctx context.Context, pool *pgxpool.Pool) ([]*model.PlantTreatment, error) {
+	rows, err := pool.Query(ctx, `SELECT 
+	  id, aquisition_type, visibility, production_ingredients, creation_date,
+		quantity, unit, notes, aquisition_places, aquisition_bought,
+		\"name\", is_organic_compatible
+		FROM public.plant_treatments`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	plantTreatments := make([]*model.PlantTreatment, 0, 10)
+	for rows.Next() {
+		var plantTreatment model.PlantTreatment
+		err = rows.Scan(&plantTreatment.ID, &plantTreatment.AquisitionType, &plantTreatment.Visibility,
+			&plantTreatment.HomeProductionIngredients, &plantTreatment.CreationDate, &plantTreatment.Quantity,
+			&plantTreatment.Unit, &plantTreatment.Notes, &plantTreatment.AquisitionPlaces,
+			&plantTreatment.AquisitionPurshaseInfo, &plantTreatment.Name, &plantTreatment.IsOrganicCompliant)
+		if err != nil {
+			return nil, err
+		}
+		plantTreatments = append(plantTreatments, &plantTreatment)
+	}
+	return plantTreatments, nil
+}

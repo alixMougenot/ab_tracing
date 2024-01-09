@@ -71,11 +71,11 @@ type GrowingMaterial {
   unit: String!
   creationDate: Time!
 
-  productionSteps: [Ingredient!]!
+  productionSteps: [ID!]!
 
   aquisitionType: AquisitionType!
-  aquisitionPlaces: [GatheringPlace!]!
-  aquisitionPurshaseInfo: [SupplyInfo!]!
+  aquisitionPlaces: [ID!]!
+  aquisitionPurshaseInfo: [ID!]!
 }
 
 input GrowingMaterialInput {
@@ -106,11 +106,11 @@ type PlantTreatment {
   unit: String!
 
   creationDate: Time!
-  homeProductionIngredients: [Ingredient!]!
+  homeProductionIngredients: [ID!]!
 
   aquisitionType: AquisitionType!
-  aquisitionPlaces: [GatheringPlace!]!
-  aquisitionPurshaseInfo: [SupplyInfo!]!
+  aquisitionPlaces: [ID!]!
+  aquisitionPurshaseInfo: [ID!]!
 }
 
 input PlantTreatmentInput {
@@ -149,13 +149,13 @@ type PlantReproductionMaterial {
   germinationSource: PlantReproductionMaterial
 
   # Harvested
-  harvestSource: [Plant!]!
+  harvestSource: [ID!]!
 
   # Aquired
-  aquisitionPlaces: [GatheringPlace!]!
-  aquisitionPurshaseInfo: [SupplyInfo!]!
+  aquisitionPlaces: [ID!]!
+  aquisitionPurshaseInfo: [ID!]!
 
-  treatmentSteps: [PlantTreatment!]!
+  treatmentSteps: [ID!]!
 }
 
 input PlantReproductionMaterialInput {
@@ -198,12 +198,12 @@ type Plant {
   plantingSource: PlantReproductionMaterial
 
   # Aquired
-  aquisitionPlaces: [GatheringPlace!]!
-  aquisitionPurshaseInfo: [SupplyInfo!]!
+  aquisitionPlaces: [ID!]!
+  aquisitionPurshaseInfo: [ID!]!
 
-  graftingSteps: [PlantReproductionMaterial!]!
-  maturationSteps: [PlantTreatment!]!
-  treatmentSteps: [PlantTreatment!]!
+  graftingSteps: [ID!]!
+  maturationSteps: [ID!]!
+  treatmentSteps: [ID!]!
 }
 
 input PlantInput {

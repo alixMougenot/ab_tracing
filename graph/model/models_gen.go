@@ -31,18 +31,18 @@ type GatheringPlaceInput struct {
 }
 
 type GrowingMaterial struct {
-	ID                     string            `json:"id"`
-	Name                   *string           `json:"name,omitempty"`
-	Notes                  string            `json:"notes"`
-	Visibility             Visibility        `json:"visibility"`
-	IsOrganicCompliant     bool              `json:"isOrganicCompliant"`
-	Quantity               float64           `json:"quantity"`
-	Unit                   string            `json:"unit"`
-	CreationDate           time.Time         `json:"creationDate"`
-	ProductionSteps        []Ingredient      `json:"productionSteps"`
-	AquisitionType         AquisitionType    `json:"aquisitionType"`
-	AquisitionPlaces       []*GatheringPlace `json:"aquisitionPlaces"`
-	AquisitionPurshaseInfo []*SupplyInfo     `json:"aquisitionPurshaseInfo"`
+	ID                     string         `json:"id"`
+	Name                   *string        `json:"name,omitempty"`
+	Notes                  string         `json:"notes"`
+	Visibility             Visibility     `json:"visibility"`
+	IsOrganicCompliant     bool           `json:"isOrganicCompliant"`
+	Quantity               float64        `json:"quantity"`
+	Unit                   string         `json:"unit"`
+	CreationDate           time.Time      `json:"creationDate"`
+	ProductionSteps        []string       `json:"productionSteps"`
+	AquisitionType         AquisitionType `json:"aquisitionType"`
+	AquisitionPlaces       []string       `json:"aquisitionPlaces"`
+	AquisitionPurshaseInfo []string       `json:"aquisitionPurshaseInfo"`
 }
 
 func (GrowingMaterial) IsIngredient() {}
@@ -65,23 +65,23 @@ type Mutation struct {
 }
 
 type Plant struct {
-	ID                     string                       `json:"id"`
-	Name                   *string                      `json:"name,omitempty"`
-	LatinName              string                       `json:"latinName"`
-	Notes                  string                       `json:"notes"`
-	Visibility             Visibility                   `json:"visibility"`
-	IsOrganic              bool                         `json:"isOrganic"`
-	PlantingDate           time.Time                    `json:"plantingDate"`
-	IsStockPlant           bool                         `json:"isStockPlant"`
-	Quantity               float64                      `json:"quantity"`
-	Unit                   string                       `json:"unit"`
-	AquisitionType         AquisitionType               `json:"aquisitionType"`
-	PlantingSource         *PlantReproductionMaterial   `json:"plantingSource,omitempty"`
-	AquisitionPlaces       []*GatheringPlace            `json:"aquisitionPlaces"`
-	AquisitionPurshaseInfo []*SupplyInfo                `json:"aquisitionPurshaseInfo"`
-	GraftingSteps          []*PlantReproductionMaterial `json:"graftingSteps"`
-	MaturationSteps        []*PlantTreatment            `json:"maturationSteps"`
-	TreatmentSteps         []*PlantTreatment            `json:"treatmentSteps"`
+	ID                     string                     `json:"id"`
+	Name                   *string                    `json:"name,omitempty"`
+	LatinName              string                     `json:"latinName"`
+	Notes                  string                     `json:"notes"`
+	Visibility             Visibility                 `json:"visibility"`
+	IsOrganic              bool                       `json:"isOrganic"`
+	PlantingDate           time.Time                  `json:"plantingDate"`
+	IsStockPlant           bool                       `json:"isStockPlant"`
+	Quantity               float64                    `json:"quantity"`
+	Unit                   string                     `json:"unit"`
+	AquisitionType         AquisitionType             `json:"aquisitionType"`
+	PlantingSource         *PlantReproductionMaterial `json:"plantingSource,omitempty"`
+	AquisitionPlaces       []string                   `json:"aquisitionPlaces"`
+	AquisitionPurshaseInfo []string                   `json:"aquisitionPurshaseInfo"`
+	GraftingSteps          []string                   `json:"graftingSteps"`
+	MaturationSteps        []string                   `json:"maturationSteps"`
+	TreatmentSteps         []string                   `json:"treatmentSteps"`
 }
 
 func (Plant) IsIngredient() {}
@@ -118,10 +118,10 @@ type PlantReproductionMaterial struct {
 	Unit                   string                     `json:"unit"`
 	AquisitionType         AquisitionType             `json:"aquisitionType"`
 	GerminationSource      *PlantReproductionMaterial `json:"germinationSource,omitempty"`
-	HarvestSource          []*Plant                   `json:"harvestSource"`
-	AquisitionPlaces       []*GatheringPlace          `json:"aquisitionPlaces"`
-	AquisitionPurshaseInfo []*SupplyInfo              `json:"aquisitionPurshaseInfo"`
-	TreatmentSteps         []*PlantTreatment          `json:"treatmentSteps"`
+	HarvestSource          []string                   `json:"harvestSource"`
+	AquisitionPlaces       []string                   `json:"aquisitionPlaces"`
+	AquisitionPurshaseInfo []string                   `json:"aquisitionPurshaseInfo"`
+	TreatmentSteps         []string                   `json:"treatmentSteps"`
 }
 
 type PlantReproductionMaterialInput struct {
@@ -143,18 +143,18 @@ type PlantReproductionMaterialInput struct {
 }
 
 type PlantTreatment struct {
-	ID                        string            `json:"id"`
-	Name                      *string           `json:"name,omitempty"`
-	Visibility                Visibility        `json:"visibility"`
-	Notes                     string            `json:"notes"`
-	IsOrganicCompliant        bool              `json:"isOrganicCompliant"`
-	Quantity                  float64           `json:"quantity"`
-	Unit                      string            `json:"unit"`
-	CreationDate              time.Time         `json:"creationDate"`
-	HomeProductionIngredients []Ingredient      `json:"homeProductionIngredients"`
-	AquisitionType            AquisitionType    `json:"aquisitionType"`
-	AquisitionPlaces          []*GatheringPlace `json:"aquisitionPlaces"`
-	AquisitionPurshaseInfo    []*SupplyInfo     `json:"aquisitionPurshaseInfo"`
+	ID                        string         `json:"id"`
+	Name                      *string        `json:"name,omitempty"`
+	Visibility                Visibility     `json:"visibility"`
+	Notes                     string         `json:"notes"`
+	IsOrganicCompliant        bool           `json:"isOrganicCompliant"`
+	Quantity                  float64        `json:"quantity"`
+	Unit                      string         `json:"unit"`
+	CreationDate              time.Time      `json:"creationDate"`
+	HomeProductionIngredients []string       `json:"homeProductionIngredients"`
+	AquisitionType            AquisitionType `json:"aquisitionType"`
+	AquisitionPlaces          []string       `json:"aquisitionPlaces"`
+	AquisitionPurshaseInfo    []string       `json:"aquisitionPurshaseInfo"`
 }
 
 func (PlantTreatment) IsIngredient() {}

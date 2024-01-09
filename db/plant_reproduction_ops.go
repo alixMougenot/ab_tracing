@@ -172,3 +172,46 @@ func DeletePlantReproductionMaterial(id string, ctx context.Context, pool *pgxpo
 	_, err := pool.Exec(ctx, "DELETE FROM public.plant_reproduction_material WHERE id = $1", id)
 	return err
 }
+
+func GetPlantReproductionMaterial(id string, ctx context.Context, pool *pgxpool.Pool) (*model.PlantReproductionMaterial, error) {
+	row := pool.QueryRow(ctx, `SELECT 
+	 id, aquisition_type, visibility, germination_source, treatment_steps, harvest_source,
+		production_date, name_latin, quantity, notes, aquisition_places, aquisition_bought,
+		\"name\", is_organic, unit, \"type\" FROM public.plant_reproduction_material WHERE id = $1`, id)
+
+	var data model.PlantReproductionMaterial
+	err := row.Scan(&data.ID, &data.AquisitionType, &data.Visibility, &data.GerminationSource, &data.TreatmentSteps,
+		&data.HarvestSource, &data.ProductionDate, &data.LatinName, &data.Quantity, &data.Notes, &data.AquisitionPlaces,
+		&data.AquisitionPurshaseInfo, &data.Name, &data.IsOrganic, &data.Unit, &data.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func ListPlantReproductionMaterials(ctx context.Context, pool *pgxpool.Pool) ([]*model.PlantReproductionMaterial, error) {
+	rows, err := pool.Query(ctx, `SELECT 
+	 id, aquisition_type, visibility, germination_source, treatment_steps, harvest_source,
+		production_date, name_latin, quantity, notes, aquisition_places, aquisition_bought,
+		\"name\", is_organic, unit, \"type\" FROM public.plant_reproduction_material`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	data := make([]*model.PlantReproductionMaterial, 0, 10)
+	for rows.Next() {
+		var current model.PlantReproductionMaterial
+		err = rows.Scan(&current.ID, &current.AquisitionType, &current.Visibility, &current.GerminationSource, &current.TreatmentSteps,
+			&current.HarvestSource, &current.ProductionDate, &current.LatinName, &current.Quantity, &current.Notes, &current.AquisitionPlaces,
+			&current.AquisitionPurshaseInfo, &current.Name, &current.IsOrganic, &current.Unit, &current.Type)
+		if err != nil {
+			return nil, err
+		}
+
+		data = append(data, &current)
+	}
+
+	return data, nil
+}

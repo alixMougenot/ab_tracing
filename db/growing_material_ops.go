@@ -139,3 +139,41 @@ func DeleteGrowingMaterial(id string, ctx context.Context, pool *pgxpool.Pool) e
 	_, err := pool.Exec(ctx, "DELETE FROM public.growing_material WHERE id = $1", id)
 	return err
 }
+
+func GetGrowingMaterial(id string, ctx context.Context, pool *pgxpool.Pool) (*model.GrowingMaterial, error) {
+	row := pool.QueryRow(ctx, "SELECT id, creation_date, \"name\", notes, visibility, is_organic_compliant, quantity, unit, aquisition_type, aquisition_places, aquisition_purshase_info, production_steps FROM public.growing_material WHERE id = $1", id)
+
+	var growingMaterial model.GrowingMaterial
+	err := row.Scan(&growingMaterial.ID, &growingMaterial.CreationDate, &growingMaterial.Name, &growingMaterial.Notes, &growingMaterial.Visibility, &growingMaterial.IsOrganicCompliant, &growingMaterial.Quantity, &growingMaterial.Unit, &growingMaterial.AquisitionType, &growingMaterial.AquisitionPlaces, &growingMaterial.AquisitionPurshaseInfo, &growingMaterial.ProductionSteps)
+	if err != nil {
+		return nil, err
+	}
+
+	return &growingMaterial, nil
+}
+
+func ListGrowingMaterials(ctx context.Context, pool *pgxpool.Pool) ([]*model.GrowingMaterial, error) {
+	rows, err := pool.Query(ctx, `SELECT 
+	id, creation_date, \"name\", notes, visibility, is_organic_compliant, quantity, unit,
+	aquisition_type, aquisition_places, aquisition_purshase_info, production_steps 
+	FROM public.growing_material`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	growingMaterials := make([]*model.GrowingMaterial, 0, 10)
+	for rows.Next() {
+		var growingMaterial model.GrowingMaterial
+		err := rows.Scan(&growingMaterial.ID, &growingMaterial.CreationDate, &growingMaterial.Name,
+			&growingMaterial.Notes, &growingMaterial.Visibility, &growingMaterial.IsOrganicCompliant,
+			&growingMaterial.Quantity, &growingMaterial.Unit, &growingMaterial.AquisitionType,
+			&growingMaterial.AquisitionPlaces, &growingMaterial.AquisitionPurshaseInfo,
+			&growingMaterial.ProductionSteps)
+		if err != nil {
+			return nil, err
+		}
+		growingMaterials = append(growingMaterials, &growingMaterial)
+	}
+	return growingMaterials, nil
+}

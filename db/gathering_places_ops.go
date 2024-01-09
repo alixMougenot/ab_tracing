@@ -88,3 +88,40 @@ func DeleteGatheringPlace(id string, ctx context.Context, pool *pgxpool.Pool) er
 	_, err := pool.Exec(ctx, "DELETE FROM public.gathering_place WHERE id = $1", id)
 	return err
 }
+
+func GetGatheringPlace(id string, ctx context.Context, pool *pgxpool.Pool) (*model.GatheringPlace, error) {
+	row := pool.QueryRow(ctx, `SELECT 
+		\"name\", notes, address, country, is_organic_compliant
+		FROM public.gathering_place WHERE id = $1`, id)
+
+	var ret model.GatheringPlace
+	err := row.Scan(&ret.Name, &ret.Notes, &ret.Address, &ret.Country, &ret.IsOrganicCompliant)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func ListGatheringPlaces(ctx context.Context, pool *pgxpool.Pool) ([]*model.GatheringPlace, error) {
+	rows, err := pool.Query(ctx, `SELECT 
+		\"name\", notes, address, country, is_organic_compliant
+		FROM public.gathering_place`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	ret := make([]*model.GatheringPlace, 0, 10)
+	for rows.Next() {
+		var tmp model.GatheringPlace
+		err := rows.Scan(&tmp.Name, &tmp.Notes, &tmp.Address, &tmp.Country, &tmp.IsOrganicCompliant)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, &tmp)
+	}
+
+	return ret, nil
+}

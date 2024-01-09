@@ -2280,9 +2280,9 @@ func (ec *executionContext) _GrowingMaterial_productionSteps(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]model.Ingredient)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNIngredient2ᚕgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐIngredientᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GrowingMaterial_productionSteps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2292,7 +2292,7 @@ func (ec *executionContext) fieldContext_GrowingMaterial_productionSteps(ctx con
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Ingredient does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2368,9 +2368,9 @@ func (ec *executionContext) _GrowingMaterial_aquisitionPlaces(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.GatheringPlace)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNGatheringPlace2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐGatheringPlaceᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GrowingMaterial_aquisitionPlaces(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2380,21 +2380,7 @@ func (ec *executionContext) fieldContext_GrowingMaterial_aquisitionPlaces(ctx co
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_GatheringPlace_id(ctx, field)
-			case "name":
-				return ec.fieldContext_GatheringPlace_name(ctx, field)
-			case "notes":
-				return ec.fieldContext_GatheringPlace_notes(ctx, field)
-			case "address":
-				return ec.fieldContext_GatheringPlace_address(ctx, field)
-			case "country":
-				return ec.fieldContext_GatheringPlace_country(ctx, field)
-			case "isOrganicCompliant":
-				return ec.fieldContext_GatheringPlace_isOrganicCompliant(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GatheringPlace", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2426,9 +2412,9 @@ func (ec *executionContext) _GrowingMaterial_aquisitionPurshaseInfo(ctx context.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SupplyInfo)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNSupplyInfo2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐSupplyInfoᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GrowingMaterial_aquisitionPurshaseInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2438,23 +2424,7 @@ func (ec *executionContext) fieldContext_GrowingMaterial_aquisitionPurshaseInfo(
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SupplyInfo_id(ctx, field)
-			case "visibility":
-				return ec.fieldContext_SupplyInfo_visibility(ctx, field)
-			case "name":
-				return ec.fieldContext_SupplyInfo_name(ctx, field)
-			case "supplier":
-				return ec.fieldContext_SupplyInfo_supplier(ctx, field)
-			case "bill":
-				return ec.fieldContext_SupplyInfo_bill(ctx, field)
-			case "notes":
-				return ec.fieldContext_SupplyInfo_notes(ctx, field)
-			case "country":
-				return ec.fieldContext_SupplyInfo_country(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SupplyInfo", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4032,9 +4002,9 @@ func (ec *executionContext) _Plant_aquisitionPlaces(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.GatheringPlace)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNGatheringPlace2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐGatheringPlaceᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Plant_aquisitionPlaces(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4044,21 +4014,7 @@ func (ec *executionContext) fieldContext_Plant_aquisitionPlaces(ctx context.Cont
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_GatheringPlace_id(ctx, field)
-			case "name":
-				return ec.fieldContext_GatheringPlace_name(ctx, field)
-			case "notes":
-				return ec.fieldContext_GatheringPlace_notes(ctx, field)
-			case "address":
-				return ec.fieldContext_GatheringPlace_address(ctx, field)
-			case "country":
-				return ec.fieldContext_GatheringPlace_country(ctx, field)
-			case "isOrganicCompliant":
-				return ec.fieldContext_GatheringPlace_isOrganicCompliant(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GatheringPlace", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4090,9 +4046,9 @@ func (ec *executionContext) _Plant_aquisitionPurshaseInfo(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SupplyInfo)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNSupplyInfo2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐSupplyInfoᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Plant_aquisitionPurshaseInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4102,23 +4058,7 @@ func (ec *executionContext) fieldContext_Plant_aquisitionPurshaseInfo(ctx contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SupplyInfo_id(ctx, field)
-			case "visibility":
-				return ec.fieldContext_SupplyInfo_visibility(ctx, field)
-			case "name":
-				return ec.fieldContext_SupplyInfo_name(ctx, field)
-			case "supplier":
-				return ec.fieldContext_SupplyInfo_supplier(ctx, field)
-			case "bill":
-				return ec.fieldContext_SupplyInfo_bill(ctx, field)
-			case "notes":
-				return ec.fieldContext_SupplyInfo_notes(ctx, field)
-			case "country":
-				return ec.fieldContext_SupplyInfo_country(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SupplyInfo", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4150,9 +4090,9 @@ func (ec *executionContext) _Plant_graftingSteps(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.PlantReproductionMaterial)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNPlantReproductionMaterial2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantReproductionMaterialᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Plant_graftingSteps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4162,41 +4102,7 @@ func (ec *executionContext) fieldContext_Plant_graftingSteps(ctx context.Context
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_PlantReproductionMaterial_id(ctx, field)
-			case "name":
-				return ec.fieldContext_PlantReproductionMaterial_name(ctx, field)
-			case "latinName":
-				return ec.fieldContext_PlantReproductionMaterial_latinName(ctx, field)
-			case "type":
-				return ec.fieldContext_PlantReproductionMaterial_type(ctx, field)
-			case "visibility":
-				return ec.fieldContext_PlantReproductionMaterial_visibility(ctx, field)
-			case "notes":
-				return ec.fieldContext_PlantReproductionMaterial_notes(ctx, field)
-			case "isOrganic":
-				return ec.fieldContext_PlantReproductionMaterial_isOrganic(ctx, field)
-			case "productionDate":
-				return ec.fieldContext_PlantReproductionMaterial_productionDate(ctx, field)
-			case "quantity":
-				return ec.fieldContext_PlantReproductionMaterial_quantity(ctx, field)
-			case "unit":
-				return ec.fieldContext_PlantReproductionMaterial_unit(ctx, field)
-			case "aquisitionType":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionType(ctx, field)
-			case "germinationSource":
-				return ec.fieldContext_PlantReproductionMaterial_germinationSource(ctx, field)
-			case "harvestSource":
-				return ec.fieldContext_PlantReproductionMaterial_harvestSource(ctx, field)
-			case "aquisitionPlaces":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionPlaces(ctx, field)
-			case "aquisitionPurshaseInfo":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionPurshaseInfo(ctx, field)
-			case "treatmentSteps":
-				return ec.fieldContext_PlantReproductionMaterial_treatmentSteps(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PlantReproductionMaterial", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4228,9 +4134,9 @@ func (ec *executionContext) _Plant_maturationSteps(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.PlantTreatment)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNPlantTreatment2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantTreatmentᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Plant_maturationSteps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4240,33 +4146,7 @@ func (ec *executionContext) fieldContext_Plant_maturationSteps(ctx context.Conte
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_PlantTreatment_id(ctx, field)
-			case "name":
-				return ec.fieldContext_PlantTreatment_name(ctx, field)
-			case "visibility":
-				return ec.fieldContext_PlantTreatment_visibility(ctx, field)
-			case "notes":
-				return ec.fieldContext_PlantTreatment_notes(ctx, field)
-			case "isOrganicCompliant":
-				return ec.fieldContext_PlantTreatment_isOrganicCompliant(ctx, field)
-			case "quantity":
-				return ec.fieldContext_PlantTreatment_quantity(ctx, field)
-			case "unit":
-				return ec.fieldContext_PlantTreatment_unit(ctx, field)
-			case "creationDate":
-				return ec.fieldContext_PlantTreatment_creationDate(ctx, field)
-			case "homeProductionIngredients":
-				return ec.fieldContext_PlantTreatment_homeProductionIngredients(ctx, field)
-			case "aquisitionType":
-				return ec.fieldContext_PlantTreatment_aquisitionType(ctx, field)
-			case "aquisitionPlaces":
-				return ec.fieldContext_PlantTreatment_aquisitionPlaces(ctx, field)
-			case "aquisitionPurshaseInfo":
-				return ec.fieldContext_PlantTreatment_aquisitionPurshaseInfo(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PlantTreatment", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4298,9 +4178,9 @@ func (ec *executionContext) _Plant_treatmentSteps(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.PlantTreatment)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNPlantTreatment2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantTreatmentᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Plant_treatmentSteps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4310,33 +4190,7 @@ func (ec *executionContext) fieldContext_Plant_treatmentSteps(ctx context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_PlantTreatment_id(ctx, field)
-			case "name":
-				return ec.fieldContext_PlantTreatment_name(ctx, field)
-			case "visibility":
-				return ec.fieldContext_PlantTreatment_visibility(ctx, field)
-			case "notes":
-				return ec.fieldContext_PlantTreatment_notes(ctx, field)
-			case "isOrganicCompliant":
-				return ec.fieldContext_PlantTreatment_isOrganicCompliant(ctx, field)
-			case "quantity":
-				return ec.fieldContext_PlantTreatment_quantity(ctx, field)
-			case "unit":
-				return ec.fieldContext_PlantTreatment_unit(ctx, field)
-			case "creationDate":
-				return ec.fieldContext_PlantTreatment_creationDate(ctx, field)
-			case "homeProductionIngredients":
-				return ec.fieldContext_PlantTreatment_homeProductionIngredients(ctx, field)
-			case "aquisitionType":
-				return ec.fieldContext_PlantTreatment_aquisitionType(ctx, field)
-			case "aquisitionPlaces":
-				return ec.fieldContext_PlantTreatment_aquisitionPlaces(ctx, field)
-			case "aquisitionPurshaseInfo":
-				return ec.fieldContext_PlantTreatment_aquisitionPurshaseInfo(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PlantTreatment", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4924,9 +4778,9 @@ func (ec *executionContext) _PlantReproductionMaterial_harvestSource(ctx context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Plant)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNPlant2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantReproductionMaterial_harvestSource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4936,43 +4790,7 @@ func (ec *executionContext) fieldContext_PlantReproductionMaterial_harvestSource
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Plant_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Plant_name(ctx, field)
-			case "latinName":
-				return ec.fieldContext_Plant_latinName(ctx, field)
-			case "notes":
-				return ec.fieldContext_Plant_notes(ctx, field)
-			case "visibility":
-				return ec.fieldContext_Plant_visibility(ctx, field)
-			case "isOrganic":
-				return ec.fieldContext_Plant_isOrganic(ctx, field)
-			case "plantingDate":
-				return ec.fieldContext_Plant_plantingDate(ctx, field)
-			case "isStockPlant":
-				return ec.fieldContext_Plant_isStockPlant(ctx, field)
-			case "quantity":
-				return ec.fieldContext_Plant_quantity(ctx, field)
-			case "unit":
-				return ec.fieldContext_Plant_unit(ctx, field)
-			case "aquisitionType":
-				return ec.fieldContext_Plant_aquisitionType(ctx, field)
-			case "plantingSource":
-				return ec.fieldContext_Plant_plantingSource(ctx, field)
-			case "aquisitionPlaces":
-				return ec.fieldContext_Plant_aquisitionPlaces(ctx, field)
-			case "aquisitionPurshaseInfo":
-				return ec.fieldContext_Plant_aquisitionPurshaseInfo(ctx, field)
-			case "graftingSteps":
-				return ec.fieldContext_Plant_graftingSteps(ctx, field)
-			case "maturationSteps":
-				return ec.fieldContext_Plant_maturationSteps(ctx, field)
-			case "treatmentSteps":
-				return ec.fieldContext_Plant_treatmentSteps(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Plant", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5004,9 +4822,9 @@ func (ec *executionContext) _PlantReproductionMaterial_aquisitionPlaces(ctx cont
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.GatheringPlace)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNGatheringPlace2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐGatheringPlaceᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantReproductionMaterial_aquisitionPlaces(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5016,21 +4834,7 @@ func (ec *executionContext) fieldContext_PlantReproductionMaterial_aquisitionPla
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_GatheringPlace_id(ctx, field)
-			case "name":
-				return ec.fieldContext_GatheringPlace_name(ctx, field)
-			case "notes":
-				return ec.fieldContext_GatheringPlace_notes(ctx, field)
-			case "address":
-				return ec.fieldContext_GatheringPlace_address(ctx, field)
-			case "country":
-				return ec.fieldContext_GatheringPlace_country(ctx, field)
-			case "isOrganicCompliant":
-				return ec.fieldContext_GatheringPlace_isOrganicCompliant(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GatheringPlace", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5062,9 +4866,9 @@ func (ec *executionContext) _PlantReproductionMaterial_aquisitionPurshaseInfo(ct
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SupplyInfo)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNSupplyInfo2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐSupplyInfoᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantReproductionMaterial_aquisitionPurshaseInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5074,23 +4878,7 @@ func (ec *executionContext) fieldContext_PlantReproductionMaterial_aquisitionPur
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SupplyInfo_id(ctx, field)
-			case "visibility":
-				return ec.fieldContext_SupplyInfo_visibility(ctx, field)
-			case "name":
-				return ec.fieldContext_SupplyInfo_name(ctx, field)
-			case "supplier":
-				return ec.fieldContext_SupplyInfo_supplier(ctx, field)
-			case "bill":
-				return ec.fieldContext_SupplyInfo_bill(ctx, field)
-			case "notes":
-				return ec.fieldContext_SupplyInfo_notes(ctx, field)
-			case "country":
-				return ec.fieldContext_SupplyInfo_country(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SupplyInfo", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5122,9 +4910,9 @@ func (ec *executionContext) _PlantReproductionMaterial_treatmentSteps(ctx contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.PlantTreatment)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNPlantTreatment2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantTreatmentᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantReproductionMaterial_treatmentSteps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5134,33 +4922,7 @@ func (ec *executionContext) fieldContext_PlantReproductionMaterial_treatmentStep
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_PlantTreatment_id(ctx, field)
-			case "name":
-				return ec.fieldContext_PlantTreatment_name(ctx, field)
-			case "visibility":
-				return ec.fieldContext_PlantTreatment_visibility(ctx, field)
-			case "notes":
-				return ec.fieldContext_PlantTreatment_notes(ctx, field)
-			case "isOrganicCompliant":
-				return ec.fieldContext_PlantTreatment_isOrganicCompliant(ctx, field)
-			case "quantity":
-				return ec.fieldContext_PlantTreatment_quantity(ctx, field)
-			case "unit":
-				return ec.fieldContext_PlantTreatment_unit(ctx, field)
-			case "creationDate":
-				return ec.fieldContext_PlantTreatment_creationDate(ctx, field)
-			case "homeProductionIngredients":
-				return ec.fieldContext_PlantTreatment_homeProductionIngredients(ctx, field)
-			case "aquisitionType":
-				return ec.fieldContext_PlantTreatment_aquisitionType(ctx, field)
-			case "aquisitionPlaces":
-				return ec.fieldContext_PlantTreatment_aquisitionPlaces(ctx, field)
-			case "aquisitionPurshaseInfo":
-				return ec.fieldContext_PlantTreatment_aquisitionPurshaseInfo(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PlantTreatment", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5541,9 +5303,9 @@ func (ec *executionContext) _PlantTreatment_homeProductionIngredients(ctx contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]model.Ingredient)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNIngredient2ᚕgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐIngredientᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantTreatment_homeProductionIngredients(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5553,7 +5315,7 @@ func (ec *executionContext) fieldContext_PlantTreatment_homeProductionIngredient
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Ingredient does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5629,9 +5391,9 @@ func (ec *executionContext) _PlantTreatment_aquisitionPlaces(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.GatheringPlace)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNGatheringPlace2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐGatheringPlaceᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantTreatment_aquisitionPlaces(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5641,21 +5403,7 @@ func (ec *executionContext) fieldContext_PlantTreatment_aquisitionPlaces(ctx con
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_GatheringPlace_id(ctx, field)
-			case "name":
-				return ec.fieldContext_GatheringPlace_name(ctx, field)
-			case "notes":
-				return ec.fieldContext_GatheringPlace_notes(ctx, field)
-			case "address":
-				return ec.fieldContext_GatheringPlace_address(ctx, field)
-			case "country":
-				return ec.fieldContext_GatheringPlace_country(ctx, field)
-			case "isOrganicCompliant":
-				return ec.fieldContext_GatheringPlace_isOrganicCompliant(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GatheringPlace", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5687,9 +5435,9 @@ func (ec *executionContext) _PlantTreatment_aquisitionPurshaseInfo(ctx context.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SupplyInfo)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNSupplyInfo2ᚕᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐSupplyInfoᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantTreatment_aquisitionPurshaseInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5699,23 +5447,7 @@ func (ec *executionContext) fieldContext_PlantTreatment_aquisitionPurshaseInfo(c
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SupplyInfo_id(ctx, field)
-			case "visibility":
-				return ec.fieldContext_SupplyInfo_visibility(ctx, field)
-			case "name":
-				return ec.fieldContext_SupplyInfo_name(ctx, field)
-			case "supplier":
-				return ec.fieldContext_SupplyInfo_supplier(ctx, field)
-			case "bill":
-				return ec.fieldContext_SupplyInfo_bill(ctx, field)
-			case "notes":
-				return ec.fieldContext_SupplyInfo_notes(ctx, field)
-			case "country":
-				return ec.fieldContext_SupplyInfo_country(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SupplyInfo", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -10901,50 +10633,28 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNIngredient2githubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐIngredient(ctx context.Context, sel ast.SelectionSet, v model.Ingredient) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
+func (ec *executionContext) unmarshalNID2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
 	}
-	return ec._Ingredient(ctx, sel, v)
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNID2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
-func (ec *executionContext) marshalNIngredient2ᚕgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐIngredientᚄ(ctx context.Context, sel ast.SelectionSet, v []model.Ingredient) graphql.Marshaler {
+func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
 	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNIngredient2githubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐIngredient(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
+		ret[i] = ec.marshalNID2string(ctx, sel, v[i])
 	}
-	wg.Wait()
 
 	for _, e := range ret {
 		if e == graphql.Null {

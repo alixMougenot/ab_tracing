@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/alixMougenot/ab_tracing/db"
 	"github.com/alixMougenot/ab_tracing/graph/model"
@@ -142,62 +141,74 @@ func (r *mutationResolver) DeleteSupplyInfo(ctx context.Context, id string) (boo
 
 // Plants is the resolver for the plants field.
 func (r *queryResolver) Plants(ctx context.Context) ([]*model.Plant, error) {
-	panic(fmt.Errorf("not implemented: Plants - plants"))
+	pool := r.DBPool
+	return db.ListPlant(ctx, pool)
 }
 
 // Plant is the resolver for the plant field.
 func (r *queryResolver) Plant(ctx context.Context, id string) (*model.Plant, error) {
-	panic(fmt.Errorf("not implemented: Plant - plant"))
+	pool := r.DBPool
+	return db.GetPlant(id, ctx, pool)
 }
 
 // PlantReproductionMaterials is the resolver for the plantReproductionMaterials field.
 func (r *queryResolver) PlantReproductionMaterials(ctx context.Context) ([]*model.PlantReproductionMaterial, error) {
-	panic(fmt.Errorf("not implemented: PlantReproductionMaterials - plantReproductionMaterials"))
+	pool := r.DBPool
+	return db.ListPlantReproductionMaterials(ctx, pool)
 }
 
 // PlantReproductionMaterial is the resolver for the plantReproductionMaterial field.
 func (r *queryResolver) PlantReproductionMaterial(ctx context.Context, id string) (*model.PlantReproductionMaterial, error) {
-	panic(fmt.Errorf("not implemented: PlantReproductionMaterial - plantReproductionMaterial"))
+	pool := r.DBPool
+	return db.GetPlantReproductionMaterial(id, ctx, pool)
 }
 
 // PlantTreatments is the resolver for the plantTreatments field.
 func (r *queryResolver) PlantTreatments(ctx context.Context) ([]*model.PlantTreatment, error) {
-	panic(fmt.Errorf("not implemented: PlantTreatments - plantTreatments"))
+	pool := r.DBPool
+	return db.ListPlantTreatments(ctx, pool)
 }
 
 // PlantTreatment is the resolver for the plantTreatment field.
 func (r *queryResolver) PlantTreatment(ctx context.Context, id string) (*model.PlantTreatment, error) {
-	panic(fmt.Errorf("not implemented: PlantTreatment - plantTreatment"))
+	pool := r.DBPool
+	return db.GetPlantTreatment(id, ctx, pool)
 }
 
 // GrowingMaterials is the resolver for the growingMaterials field.
 func (r *queryResolver) GrowingMaterials(ctx context.Context) ([]*model.GrowingMaterial, error) {
-	panic(fmt.Errorf("not implemented: GrowingMaterials - growingMaterials"))
+	pool := r.DBPool
+	return db.ListGrowingMaterials(ctx, pool)
 }
 
 // GrowingMaterial is the resolver for the growingMaterial field.
 func (r *queryResolver) GrowingMaterial(ctx context.Context, id string) (*model.GrowingMaterial, error) {
-	panic(fmt.Errorf("not implemented: GrowingMaterial - growingMaterial"))
+	pool := r.DBPool
+	return db.GetGrowingMaterial(id, ctx, pool)
 }
 
 // GatheringPlaces is the resolver for the gatheringPlaces field.
 func (r *queryResolver) GatheringPlaces(ctx context.Context) ([]*model.GatheringPlace, error) {
-	panic(fmt.Errorf("not implemented: GatheringPlaces - gatheringPlaces"))
+	pool := r.DBPool
+	return db.ListGatheringPlaces(ctx, pool)
 }
 
 // GatheringPlace is the resolver for the gatheringPlace field.
 func (r *queryResolver) GatheringPlace(ctx context.Context, id string) (*model.GatheringPlace, error) {
-	panic(fmt.Errorf("not implemented: GatheringPlace - gatheringPlace"))
+	pool := r.DBPool
+	return db.GetGatheringPlace(id, ctx, pool)
 }
 
 // SupplyInfos is the resolver for the supplyInfos field.
 func (r *queryResolver) SupplyInfos(ctx context.Context) ([]*model.SupplyInfo, error) {
-	panic(fmt.Errorf("not implemented: SupplyInfos - supplyInfos"))
+	pool := r.DBPool
+	return db.ListSupplyInfos(ctx, pool)
 }
 
 // SupplyInfo is the resolver for the supplyInfo field.
 func (r *queryResolver) SupplyInfo(ctx context.Context, id string) (*model.SupplyInfo, error) {
-	panic(fmt.Errorf("not implemented: SupplyInfo - supplyInfo"))
+	pool := r.DBPool
+	return db.GetSupplyInfo(id, ctx, pool)
 }
 
 // Mutation returns MutationResolver implementation.
