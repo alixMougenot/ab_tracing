@@ -1,0 +1,284 @@
+# Copyright (c) 2023, Alix Mougenot (Au pied des Arbres), alix.mougenot@gmail.com
+# See license file.
+# GraphQL schema
+
+scalar Time
+
+enum Visibility {
+  PUBLIC_FACING
+  INTERNAL
+}
+
+enum AquisitionType {
+  GROWN
+  PURCHASED
+  GATHERED
+  HOME_MADE
+}
+
+enum ReproductiveMaterialType {
+  SEED
+  CUTTING
+  GRAFTING
+}
+
+union Ingredient = GrowingMaterial | Plant | PlantTreatment
+
+type GatheringPlace {
+  id: ID!
+  name: String
+  notes: String!
+  address: String!
+  country: String!
+  isOrganicCompliant: Boolean!
+}
+
+input GatheringPlaceInput {
+  name: String
+  notes: String
+  address: String
+  country: String
+  isOrganicCompliant: Boolean
+}
+
+type SupplyInfo {
+  id: ID!
+  visibility: Visibility!
+  name: String
+  supplier: String!
+  bill: String!
+  notes: String!
+  country: String
+}
+
+input SupplyInfoInput {
+  visibility: Visibility
+  name: String
+  supplier: String
+  bill: String
+  notes: String
+  country: String
+}
+
+type GrowingMaterial {
+  id: ID!
+  name: String
+  notes: String!
+  visibility: Visibility!
+
+  isOrganicCompliant: Boolean!
+  quantity: Float!
+  unit: String!
+  creationDate: Time!
+
+  productionSteps: [Ingredient!]!
+
+  aquisitionType: AquisitionType!
+  aquisitionPlaces: [GatheringPlace!]!
+  aquisitionPurshaseInfo: [SupplyInfo!]!
+}
+
+input GrowingMaterialInput {
+  name: String
+  notes: String
+  visibility: Visibility
+
+  isOrganicCompliant: Boolean
+  quantity: Float
+  unit: String
+  creationDate: Time
+
+  productionSteps: [ID!]
+
+  aquisitionType: AquisitionType
+  aquisitionPlaces: [ID!]
+  aquisitionPurshaseInfo: [ID!]
+}
+
+type PlantTreatment {
+  id: ID!
+  name: String
+  visibility: Visibility!
+  notes: String!
+  isOrganicCompliant: Boolean!
+
+  quantity: Float!
+  unit: String!
+
+  creationDate: Time!
+  homeProductionIngredients: [Ingredient!]!
+
+  aquisitionType: AquisitionType!
+  aquisitionPlaces: [GatheringPlace!]!
+  aquisitionPurshaseInfo: [SupplyInfo!]!
+}
+
+input PlantTreatmentInput {
+  name: String
+  visibility: Visibility
+  notes: String
+  isOrganicCompliant: Boolean
+
+  quantity: Float
+  unit: String
+
+  creationDate: Time
+  homeProductionIngredients: [ID!]
+
+  aquisitionType: AquisitionType
+  aquisitionPlaces: [ID!]
+  aquisitionPurshaseInfo: [ID!]
+}
+
+type PlantReproductionMaterial {
+  id: ID!
+  name: String
+  latinName: String!
+  type: ReproductiveMaterialType!
+  visibility: Visibility!
+  notes: String!
+
+  isOrganic: Boolean!
+  productionDate: Time!
+  quantity: Float!
+  unit: String!
+
+  aquisitionType: AquisitionType!
+
+  # Grown
+  germinationSource: PlantReproductionMaterial
+
+  # Harvested
+  harvestSource: [Plant!]!
+
+  # Aquired
+  aquisitionPlaces: [GatheringPlace!]!
+  aquisitionPurshaseInfo: [SupplyInfo!]!
+
+  treatmentSteps: [PlantTreatment!]!
+}
+
+input PlantReproductionMaterialInput {
+  name: String
+  latinName: String
+  type: ReproductiveMaterialType
+  visibility: Visibility
+  notes: String
+
+  isOrganic: Boolean
+  productionDate: Time
+  quantity: Float
+  unit: String
+
+  aquisitionType: AquisitionType
+  germinationSource: ID
+  harvestSource: [ID!]
+  aquisitionPlaces: [ID!]
+  aquisitionPurshaseInfo: [ID!]
+
+  treatmentSteps: [ID!]
+}
+
+type Plant {
+  id: ID!
+  name: String
+  latinName: String!
+  notes: String!
+  visibility: Visibility!
+
+  isOrganic: Boolean!
+  plantingDate: Time!
+  isStockPlant: Boolean!
+  quantity: Float!
+  unit: String!
+
+  aquisitionType: AquisitionType!
+
+  # Grown
+  plantingSource: PlantReproductionMaterial
+
+  # Aquired
+  aquisitionPlaces: [GatheringPlace!]!
+  aquisitionPurshaseInfo: [SupplyInfo!]!
+
+  graftingSteps: [PlantReproductionMaterial!]!
+  maturationSteps: [PlantTreatment!]!
+  treatmentSteps: [PlantTreatment!]!
+}
+
+input PlantInput {
+  name: String
+  latinName: String
+  notes: String
+  visibility: Visibility
+
+  isOrganic: Boolean
+  plantingDate: Time
+  isStockPlant: Boolean
+  quantity: Float
+  unit: String
+
+  aquisitionType: AquisitionType
+  plantingSource: ID
+  aquisitionPlaces: [ID!]
+  aquisitionPurshaseInfo: [ID!]
+
+  graftingSteps: [ID!]
+  maturationSteps: [ID!]
+  treatmentSteps: [ID!]
+}
+
+### GraphQL top levels ###
+type Query {
+  plants: [Plant!]!
+  plant(id: ID!): Plant
+
+  plantReproductionMaterials: [PlantReproductionMaterial!]!
+  plantReproductionMaterial(id: ID!): PlantReproductionMaterial
+
+  plantTreatments: [PlantTreatment!]!
+  plantTreatment(id: ID!): PlantTreatment
+
+  growingMaterials: [GrowingMaterial!]!
+  growingMaterial(id: ID!): GrowingMaterial
+
+  gatheringPlaces: [GatheringPlace!]!
+  gatheringPlace(id: ID!): GatheringPlace
+
+  supplyInfos: [SupplyInfo!]!
+  supplyInfo(id: ID!): SupplyInfo
+}
+
+type Mutation {
+  createPlant(plant: PlantInput!): ID!
+  updatePlant(id: ID!, plant: PlantInput): Boolean!
+  deletePlant(id: ID!): Boolean!
+
+  createPlantReproductionMaterial(
+    plantReproductionMaterial: PlantReproductionMaterialInput!
+  ): ID!
+  updatePlantReproductionMaterial(
+    id: ID!
+    update: PlantReproductionMaterialInput!
+  ): Boolean!
+  deletePlantReproductionMaterial(id: ID!): Boolean!
+
+  createPlantTreatment(plantTreatment: PlantTreatmentInput!): ID!
+  updatePlantTreatment(id: ID!, update: PlantTreatmentInput!): Boolean!
+  deletePlantTreatment(id: ID!): Boolean!
+
+  createGrowingMaterial(growingMaterial: GrowingMaterialInput!): ID!
+  updateGrowingMaterial(
+    id: ID!
+    growingMaterial: GrowingMaterialInput!
+  ): Boolean!
+  deleteGrowingMaterial(id: ID!): Boolean!
+
+  createGatheringPlace(gatheringPlace: GatheringPlaceInput!): ID!
+  updateGatheringPlace(id: ID!, gatheringPlace: GatheringPlaceInput): Boolean!
+  deleteGatheringPlace(id: ID!): Boolean!
+
+  createSupplyInfo(supplyInfo: SupplyInfoInput!): ID!
+  updateSupplyInfo(id: ID!, udpate: SupplyInfoInput!): Boolean!
+  deleteSupplyInfo(id: ID!): Boolean!
+}
