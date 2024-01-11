@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -15,14 +16,8 @@ func CreatePlant(info model.PlantInput, ctx context.Context, pool *pgxpool.Pool)
 	if info.Visibility == nil {
 		return "", fmt.Errorf("visibility cannot be nil")
 	}
-	if info.PlantingSource == nil {
-		return "", fmt.Errorf("planingSource cannot be nil")
-	}
 	if info.TreatmentSteps == nil {
 		return "", fmt.Errorf("treatmentSteps cannot be nil")
-	}
-	if info.PlantingDate == nil {
-		return "", fmt.Errorf("plantingDate cannot be nil")
 	}
 	if info.Name == nil {
 		return "", fmt.Errorf("name cannot be nil")
@@ -58,7 +53,8 @@ func CreatePlant(info model.PlantInput, ctx context.Context, pool *pgxpool.Pool)
 	quantity, notes, aquisition_places, aquisition_bought, is_stock_plant,
 	"name", is_organic, unit)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`,
-		info.AquisitionType, info.Visibility, info.PlantingSource, info.GraftingSteps,
+		strings.ToLower(info.AquisitionType.String()), strings.ToLower(info.Visibility.String()),
+		info.PlantingSource, info.GraftingSteps,
 		info.MaturationSteps, info.TreatmentSteps, info.PlantingDate, info.LatinName,
 		info.Quantity, info.Notes, info.AquisitionPlaces, info.AquisitionPurshaseInfo, info.IsStockPlant,
 		info.Name, info.IsOrganic, info.Unit)
@@ -73,18 +69,19 @@ func CreatePlant(info model.PlantInput, ctx context.Context, pool *pgxpool.Pool)
 }
 
 func UpdatePlant(id string, info model.PlantInput, ctx context.Context, pool *pgxpool.Pool) error {
-	query := "UPDATE public.plant_reproduction_material SET"
+	query := "UPDATE public.plant SET"
 	args := []interface{}{}
+	args = append(args, id)
 	i := 2 // $1 is the id
 
 	if info.AquisitionType != nil {
 		query += fmt.Sprintf(" aquisition_type = $%d,", i)
-		args = append(args, info.AquisitionType)
+		args = append(args, strings.ToLower(info.AquisitionType.String()))
 		i++
 	}
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, info.Visibility)
+		args = append(args, strings.ToLower(info.Visibility.String()))
 		i++
 	}
 	if info.PlantingSource != nil {
@@ -185,10 +182,22 @@ func GetPlant(id string, ctx context.Context, pool *pgxpool.Pool) (*model.Plant,
   FROM public.plant WHERE id = $1`, id)
 
 	var plant model.Plant
-	err := row.Scan(&plant.ID, &plant.AquisitionType, &plant.Visibility, &plant.PlantingSource,
+	var visibility string
+	var aquisitionType string
+	err := row.Scan(&plant.ID, &aquisitionType, &visibility, &plant.PlantingSource,
 		&plant.GraftingSteps, &plant.MaturationSteps, &plant.TreatmentSteps, &plant.PlantingDate,
 		&plant.LatinName, &plant.Quantity, &plant.Notes, &plant.AquisitionPlaces,
 		&plant.AquisitionPurshaseInfo, &plant.IsStockPlant, &plant.Name, &plant.IsOrganic, &plant.Unit)
+	if err != nil {
+		return nil, err
+	}
+
+	err = plant.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+	if err != nil {
+		return nil, err
+	}
+
+	err = plant.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
 	if err != nil {
 		return nil, err
 	}
@@ -211,10 +220,22 @@ func ListPlant(ctx context.Context, pool *pgxpool.Pool) ([]*model.Plant, error) 
 	plants := make([]*model.Plant, 0, 10)
 	for rows.Next() {
 		var plant model.Plant
-		err := rows.Scan(&plant.ID, &plant.AquisitionType, &plant.Visibility, &plant.PlantingSource,
+		var visibility string
+		var aquisitionType string
+		err := rows.Scan(&plant.ID, &aquisitionType, &visibility, &plant.PlantingSource,
 			&plant.GraftingSteps, &plant.MaturationSteps, &plant.TreatmentSteps, &plant.PlantingDate,
 			&plant.LatinName, &plant.Quantity, &plant.Notes, &plant.AquisitionPlaces,
 			&plant.AquisitionPurshaseInfo, &plant.IsStockPlant, &plant.Name, &plant.IsOrganic, &plant.Unit)
+		if err != nil {
+			return nil, err
+		}
+
+		err = plant.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+		if err != nil {
+			return nil, err
+		}
+
+		err = plant.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
 		if err != nil {
 			return nil, err
 		}

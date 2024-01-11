@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -48,8 +49,9 @@ func CreateGrowingMaterial(info model.GrowingMaterialInput, ctx context.Context,
 	aquisition_type, aquisition_places, aquisition_bought, production_steps) 
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
 	RETURNING id`,
-		info.CreationDate, info.Name, info.Notes, info.Visibility, info.IsOrganicCompliant, info.Quantity, info.Unit,
-		info.AquisitionType, info.AquisitionPlaces, info.AquisitionPurshaseInfo, info.HomeProductionIngredients)
+		info.CreationDate, info.Name, info.Notes, strings.ToLower(info.Visibility.String()),
+		info.IsOrganicCompliant, info.Quantity, info.Unit, strings.ToLower(info.AquisitionType.String()),
+		info.AquisitionPlaces, info.AquisitionPurshaseInfo, info.HomeProductionIngredients)
 
 	var id string
 	err := row.Scan(&id)
@@ -63,6 +65,7 @@ func CreateGrowingMaterial(info model.GrowingMaterialInput, ctx context.Context,
 func UpdateGrowingMaterial(id string, info model.GrowingMaterialInput, ctx context.Context, pool *pgxpool.Pool) error {
 	query := "UPDATE public.growing_material SET"
 	args := []interface{}{}
+	args = append(args, id)
 	i := 2
 
 	if info.CreationDate != nil {
@@ -82,7 +85,7 @@ func UpdateGrowingMaterial(id string, info model.GrowingMaterialInput, ctx conte
 	}
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, info.Visibility)
+		args = append(args, strings.ToLower(info.Visibility.String()))
 		i++
 	}
 	if info.IsOrganicCompliant != nil {
@@ -102,7 +105,7 @@ func UpdateGrowingMaterial(id string, info model.GrowingMaterialInput, ctx conte
 	}
 	if info.AquisitionType != nil {
 		query += fmt.Sprintf(" aquisition_type = $%d,", i)
-		args = append(args, info.AquisitionType)
+		args = append(args, strings.ToLower(info.AquisitionType.String()))
 		i++
 	}
 	if info.AquisitionPlaces != nil {
@@ -129,7 +132,6 @@ func UpdateGrowingMaterial(id string, info model.GrowingMaterialInput, ctx conte
 	// Remove the last comma and add the WHERE clause
 	query = query[:len(query)-1]
 	query = query + " WHERE id = $1"
-	args = append(args, id)
 
 	_, err := pool.Exec(ctx, query, args...)
 	return err
@@ -149,11 +151,23 @@ func GetGrowingMaterial(id string, ctx context.Context, pool *pgxpool.Pool) (*mo
 	WHERE id = $1`, id)
 
 	var growingMaterial model.GrowingMaterial
+	var visibility string
+	var aquisitionType string
 	err := row.Scan(&growingMaterial.ID, &growingMaterial.CreationDate, &growingMaterial.Name,
-		&growingMaterial.Notes, &growingMaterial.Visibility, &growingMaterial.IsOrganicCompliant,
-		&growingMaterial.Quantity, &growingMaterial.Unit, &growingMaterial.AquisitionType,
+		&growingMaterial.Notes, &visibility, &growingMaterial.IsOrganicCompliant,
+		&growingMaterial.Quantity, &growingMaterial.Unit, &aquisitionType,
 		&growingMaterial.AquisitionPlaces, &growingMaterial.AquisitionPurshaseInfo,
 		&growingMaterial.HomeProductionIngredients)
+	if err != nil {
+		return nil, err
+	}
+
+	err = growingMaterial.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+	if err != nil {
+		return nil, err
+	}
+
+	err = growingMaterial.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
 	if err != nil {
 		return nil, err
 	}
@@ -174,14 +188,27 @@ func ListGrowingMaterials(ctx context.Context, pool *pgxpool.Pool) ([]*model.Gro
 	growingMaterials := make([]*model.GrowingMaterial, 0, 10)
 	for rows.Next() {
 		var growingMaterial model.GrowingMaterial
+		var visibility string
+		var aquisitionType string
 		err := rows.Scan(&growingMaterial.ID, &growingMaterial.CreationDate, &growingMaterial.Name,
-			&growingMaterial.Notes, &growingMaterial.Visibility, &growingMaterial.IsOrganicCompliant,
-			&growingMaterial.Quantity, &growingMaterial.Unit, &growingMaterial.AquisitionType,
+			&growingMaterial.Notes, &visibility, &growingMaterial.IsOrganicCompliant,
+			&growingMaterial.Quantity, &growingMaterial.Unit, &aquisitionType,
 			&growingMaterial.AquisitionPlaces, &growingMaterial.AquisitionPurshaseInfo,
 			&growingMaterial.HomeProductionIngredients)
 		if err != nil {
 			return nil, err
 		}
+
+		err = growingMaterial.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+		if err != nil {
+			return nil, err
+		}
+
+		err = growingMaterial.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
+		if err != nil {
+			return nil, err
+		}
+
 		growingMaterials = append(growingMaterials, &growingMaterial)
 	}
 	return growingMaterials, nil

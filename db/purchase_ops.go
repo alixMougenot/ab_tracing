@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -31,7 +32,8 @@ func CreateSupplyInfo(info model.SupplyInfoInput, ctx context.Context, pool *pgx
 	row := pool.QueryRow(ctx, `INSERT INTO public.supply_info 
 	(visibility, "name", country, supplier, bill_link, notes)
 	VALUES ($1, $2, $3, $4, $5, $6)
-	RETURNING id`, info.Visibility, info.Name, info.Country, info.Supplier, info.Bill, info.Notes)
+	RETURNING id`, strings.ToLower(info.Visibility.String()),
+		info.Name, info.Country, info.Supplier, info.Bill, info.Notes)
 
 	var retid = ""
 	err := row.Scan(&retid)
@@ -51,7 +53,7 @@ func UpdateSupplyInfo(id string, info model.SupplyInfoInput, ctx context.Context
 
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, info.Visibility)
+		args = append(args, strings.ToLower(info.Visibility.String()))
 		i++
 	}
 	if info.Name != nil {
@@ -101,8 +103,13 @@ func DeleteSupplyInfo(id string, ctx context.Context, pool *pgxpool.Pool) error 
 func GetSupplyInfo(id string, ctx context.Context, pool *pgxpool.Pool) (*model.SupplyInfo, error) {
 	row := pool.QueryRow(ctx, "SELECT id, visibility, \"name\", country, supplier, bill_link, notes FROM public.supply_info WHERE id = $1", id)
 	var ret model.SupplyInfo
-	err := row.Scan(&ret.ID, &ret.Visibility, &ret.Name, &ret.Country, &ret.Supplier, &ret.Bill, &ret.Notes)
+	var visibility string
+	err := row.Scan(&ret.ID, &visibility, &ret.Name, &ret.Country, &ret.Supplier, &ret.Bill, &ret.Notes)
+	if err != nil {
+		return nil, err
+	}
 
+	err = ret.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +127,12 @@ func ListSupplyInfos(ctx context.Context, pool *pgxpool.Pool) ([]*model.SupplyIn
 	ret := make([]*model.SupplyInfo, 0, 10)
 	for rows.Next() {
 		var tmp model.SupplyInfo
-		err := rows.Scan(&tmp.ID, &tmp.Visibility, &tmp.Name, &tmp.Country, &tmp.Supplier, &tmp.Bill, &tmp.Notes)
+		var visibility string
+		err := rows.Scan(&tmp.ID, &visibility, &tmp.Name, &tmp.Country, &tmp.Supplier, &tmp.Bill, &tmp.Notes)
+		if err != nil {
+			return nil, err
+		}
+		err = tmp.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
 		if err != nil {
 			return nil, err
 		}

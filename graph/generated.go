@@ -55,6 +55,7 @@ type ComplexityRoot struct {
 		IsOrganicCompliant func(childComplexity int) int
 		Name               func(childComplexity int) int
 		Notes              func(childComplexity int) int
+		Visibility         func(childComplexity int) int
 	}
 
 	GrowingMaterial struct {
@@ -268,6 +269,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GatheringPlace.Notes(childComplexity), true
+
+	case "GatheringPlace.visibility":
+		if e.complexity.GatheringPlace.Visibility == nil {
+			break
+		}
+
+		return e.complexity.GatheringPlace.Visibility(childComplexity), true
 
 	case "GrowingMaterial.aquisitionPlaces":
 		if e.complexity.GrowingMaterial.AquisitionPlaces == nil {
@@ -1900,6 +1908,50 @@ func (ec *executionContext) fieldContext_GatheringPlace_isOrganicCompliant(ctx c
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GatheringPlace_visibility(ctx context.Context, field graphql.CollectedField, obj *model.GatheringPlace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GatheringPlace_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Visibility)
+	fc.Result = res
+	return ec.marshalNVisibility2githubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐVisibility(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GatheringPlace_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GatheringPlace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Visibility does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6064,6 +6116,8 @@ func (ec *executionContext) fieldContext_Query_gatheringPlaces(ctx context.Conte
 				return ec.fieldContext_GatheringPlace_country(ctx, field)
 			case "isOrganicCompliant":
 				return ec.fieldContext_GatheringPlace_isOrganicCompliant(ctx, field)
+			case "visibility":
+				return ec.fieldContext_GatheringPlace_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type GatheringPlace", field.Name)
 		},
@@ -6119,6 +6173,8 @@ func (ec *executionContext) fieldContext_Query_gatheringPlace(ctx context.Contex
 				return ec.fieldContext_GatheringPlace_country(ctx, field)
 			case "isOrganicCompliant":
 				return ec.fieldContext_GatheringPlace_isOrganicCompliant(ctx, field)
+			case "visibility":
+				return ec.fieldContext_GatheringPlace_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type GatheringPlace", field.Name)
 		},
@@ -8476,7 +8532,7 @@ func (ec *executionContext) unmarshalInputGatheringPlaceInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "notes", "address", "country", "isOrganicCompliant"}
+	fieldsInOrder := [...]string{"name", "notes", "address", "country", "isOrganicCompliant", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8518,6 +8574,13 @@ func (ec *executionContext) unmarshalInputGatheringPlaceInput(ctx context.Contex
 				return it, err
 			}
 			it.IsOrganicCompliant = data
+		case "visibility":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
+			data, err := ec.unmarshalOVisibility2ᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐVisibility(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Visibility = data
 		}
 	}
 
@@ -9110,6 +9173,11 @@ func (ec *executionContext) _GatheringPlace(ctx context.Context, sel ast.Selecti
 			}
 		case "isOrganicCompliant":
 			out.Values[i] = ec._GatheringPlace_isOrganicCompliant(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "visibility":
+			out.Values[i] = ec._GatheringPlace_visibility(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -14,20 +14,22 @@ type Ingredient interface {
 }
 
 type GatheringPlace struct {
-	ID                 string  `json:"id"`
-	Name               *string `json:"name,omitempty"`
-	Notes              string  `json:"notes"`
-	Address            string  `json:"address"`
-	Country            string  `json:"country"`
-	IsOrganicCompliant bool    `json:"isOrganicCompliant"`
+	ID                 string     `json:"id"`
+	Name               *string    `json:"name,omitempty"`
+	Notes              string     `json:"notes"`
+	Address            string     `json:"address"`
+	Country            string     `json:"country"`
+	IsOrganicCompliant bool       `json:"isOrganicCompliant"`
+	Visibility         Visibility `json:"visibility"`
 }
 
 type GatheringPlaceInput struct {
-	Name               *string `json:"name,omitempty"`
-	Notes              *string `json:"notes,omitempty"`
-	Address            *string `json:"address,omitempty"`
-	Country            *string `json:"country,omitempty"`
-	IsOrganicCompliant *bool   `json:"isOrganicCompliant,omitempty"`
+	Name               *string     `json:"name,omitempty"`
+	Notes              *string     `json:"notes,omitempty"`
+	Address            *string     `json:"address,omitempty"`
+	Country            *string     `json:"country,omitempty"`
+	IsOrganicCompliant *bool       `json:"isOrganicCompliant,omitempty"`
+	Visibility         *Visibility `json:"visibility,omitempty"`
 }
 
 type GrowingMaterial struct {
