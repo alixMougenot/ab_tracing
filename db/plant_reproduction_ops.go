@@ -58,7 +58,7 @@ func CreatePlantReproductionMaterial(info model.PlantReproductionMaterialInput, 
 	row := pool.QueryRow(ctx, `INSERT INTO public.plant_reproduction_material 
 	(aquisition_type, visibility, germination_source, treatment_steps, harvest_source,
 	 production_date, name_latin, quantity, notes, aquisition_places, aquisition_bought,
-	 \"name\", is_organic, unit, \"type\")
+	 "name", is_organic, unit, \"type\")
 	 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 	 RETURNING id`,
 		info.AquisitionType, info.Visibility, info.GerminationSource, info.TreatmentSteps, info.HarvestSource,
@@ -177,7 +177,7 @@ func GetPlantReproductionMaterial(id string, ctx context.Context, pool *pgxpool.
 	row := pool.QueryRow(ctx, `SELECT 
 	 id, aquisition_type, visibility, germination_source, treatment_steps, harvest_source,
 		production_date, name_latin, quantity, notes, aquisition_places, aquisition_bought,
-		\"name\", is_organic, unit, \"type\" FROM public.plant_reproduction_material WHERE id = $1`, id)
+		"name", is_organic, unit, "type" FROM public.plant_reproduction_material WHERE id = $1`, id)
 
 	var data model.PlantReproductionMaterial
 	err := row.Scan(&data.ID, &data.AquisitionType, &data.Visibility, &data.GerminationSource, &data.TreatmentSteps,
@@ -194,7 +194,7 @@ func ListPlantReproductionMaterials(ctx context.Context, pool *pgxpool.Pool) ([]
 	rows, err := pool.Query(ctx, `SELECT 
 	 id, aquisition_type, visibility, germination_source, treatment_steps, harvest_source,
 		production_date, name_latin, quantity, notes, aquisition_places, aquisition_bought,
-		\"name\", is_organic, unit, \"type\" FROM public.plant_reproduction_material`)
+		"name", is_organic, unit, "type" FROM public.plant_reproduction_material`)
 	if err != nil {
 		return nil, err
 	}

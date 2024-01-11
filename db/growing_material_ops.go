@@ -36,20 +36,20 @@ func CreateGrowingMaterial(info model.GrowingMaterialInput, ctx context.Context,
 	if info.AquisitionPurshaseInfo == nil {
 		return "", fmt.Errorf("aquisitionPurshaseInfo cannot be nil")
 	}
-	if info.ProductionSteps == nil {
-		return "", fmt.Errorf("productionSteps cannot be nil")
+	if info.HomeProductionIngredients == nil {
+		return "", fmt.Errorf("homeProductionIngredients cannot be nil")
 	}
 	if info.CreationDate == nil {
 		return "", fmt.Errorf("creationDate cannot be nil")
 	}
 
 	row := pool.QueryRow(ctx, `INSERT INTO public.growing_material
-	(creation_date, \"name\", notes, visibility, is_organic_compliant, quantity, unit, 
-	aquisition_type, aquisition_places, aquisition_purshase_info, production_steps) 
+	(creation_date, "name", notes, visibility, is_organic_compliant, quantity, unit, 
+	aquisition_type, aquisition_places, aquisition_bought, production_steps) 
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
 	RETURNING id`,
 		info.CreationDate, info.Name, info.Notes, info.Visibility, info.IsOrganicCompliant, info.Quantity, info.Unit,
-		info.AquisitionType, info.AquisitionPlaces, info.AquisitionPurshaseInfo, info.ProductionSteps)
+		info.AquisitionType, info.AquisitionPlaces, info.AquisitionPurshaseInfo, info.HomeProductionIngredients)
 
 	var id string
 	err := row.Scan(&id)
@@ -111,13 +111,13 @@ func UpdateGrowingMaterial(id string, info model.GrowingMaterialInput, ctx conte
 		i++
 	}
 	if info.AquisitionPurshaseInfo != nil {
-		query += fmt.Sprintf(" aquisition_purshase_info = $%d,", i)
+		query += fmt.Sprintf(" aquisition_bought = $%d,", i)
 		args = append(args, info.AquisitionPurshaseInfo)
 		i++
 	}
-	if info.ProductionSteps != nil {
-		query += fmt.Sprintf(" production_steps = $%d,", i)
-		args = append(args, info.ProductionSteps)
+	if info.HomeProductionIngredients != nil {
+		query += fmt.Sprintf(" homeProductionIngredients = $%d,", i)
+		args = append(args, info.HomeProductionIngredients)
 		i++
 	}
 
@@ -141,10 +141,19 @@ func DeleteGrowingMaterial(id string, ctx context.Context, pool *pgxpool.Pool) e
 }
 
 func GetGrowingMaterial(id string, ctx context.Context, pool *pgxpool.Pool) (*model.GrowingMaterial, error) {
-	row := pool.QueryRow(ctx, "SELECT id, creation_date, \"name\", notes, visibility, is_organic_compliant, quantity, unit, aquisition_type, aquisition_places, aquisition_purshase_info, production_steps FROM public.growing_material WHERE id = $1", id)
+	row := pool.QueryRow(ctx, `SELECT
+	id, creation_date, "name", notes, visibility, is_organic_compliant, 
+	quantity, unit, aquisition_type, aquisition_places, aquisition_bought, 
+  production_steps 
+	FROM public.growing_material
+	WHERE id = $1`, id)
 
 	var growingMaterial model.GrowingMaterial
-	err := row.Scan(&growingMaterial.ID, &growingMaterial.CreationDate, &growingMaterial.Name, &growingMaterial.Notes, &growingMaterial.Visibility, &growingMaterial.IsOrganicCompliant, &growingMaterial.Quantity, &growingMaterial.Unit, &growingMaterial.AquisitionType, &growingMaterial.AquisitionPlaces, &growingMaterial.AquisitionPurshaseInfo, &growingMaterial.ProductionSteps)
+	err := row.Scan(&growingMaterial.ID, &growingMaterial.CreationDate, &growingMaterial.Name,
+		&growingMaterial.Notes, &growingMaterial.Visibility, &growingMaterial.IsOrganicCompliant,
+		&growingMaterial.Quantity, &growingMaterial.Unit, &growingMaterial.AquisitionType,
+		&growingMaterial.AquisitionPlaces, &growingMaterial.AquisitionPurshaseInfo,
+		&growingMaterial.HomeProductionIngredients)
 	if err != nil {
 		return nil, err
 	}
@@ -154,8 +163,8 @@ func GetGrowingMaterial(id string, ctx context.Context, pool *pgxpool.Pool) (*mo
 
 func ListGrowingMaterials(ctx context.Context, pool *pgxpool.Pool) ([]*model.GrowingMaterial, error) {
 	rows, err := pool.Query(ctx, `SELECT 
-	id, creation_date, \"name\", notes, visibility, is_organic_compliant, quantity, unit,
-	aquisition_type, aquisition_places, aquisition_purshase_info, production_steps 
+	id, creation_date, "name", notes, visibility, is_organic_compliant, quantity, unit,
+	aquisition_type, aquisition_places, aquisition_bought, production_steps 
 	FROM public.growing_material`)
 	if err != nil {
 		return nil, err
@@ -169,7 +178,7 @@ func ListGrowingMaterials(ctx context.Context, pool *pgxpool.Pool) ([]*model.Gro
 			&growingMaterial.Notes, &growingMaterial.Visibility, &growingMaterial.IsOrganicCompliant,
 			&growingMaterial.Quantity, &growingMaterial.Unit, &growingMaterial.AquisitionType,
 			&growingMaterial.AquisitionPlaces, &growingMaterial.AquisitionPurshaseInfo,
-			&growingMaterial.ProductionSteps)
+			&growingMaterial.HomeProductionIngredients)
 		if err != nil {
 			return nil, err
 		}

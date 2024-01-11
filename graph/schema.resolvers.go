@@ -18,11 +18,11 @@ func (r *mutationResolver) CreatePlant(ctx context.Context, plant model.PlantInp
 }
 
 // UpdatePlant is the resolver for the updatePlant field.
-func (r *mutationResolver) UpdatePlant(ctx context.Context, id string, plant *model.PlantInput) (bool, error) {
+func (r *mutationResolver) UpdatePlant(ctx context.Context, id string, update *model.PlantInput) (bool, error) {
 	pool := r.DBPool
 	var input = model.PlantInput{}
-	if plant != nil {
-		input = *plant
+	if update != nil {
+		input = *update
 	}
 	result := db.UpdatePlant(id, input, ctx, pool)
 	return result == nil, result
@@ -82,9 +82,9 @@ func (r *mutationResolver) CreateGrowingMaterial(ctx context.Context, growingMat
 }
 
 // UpdateGrowingMaterial is the resolver for the updateGrowingMaterial field.
-func (r *mutationResolver) UpdateGrowingMaterial(ctx context.Context, id string, growingMaterial model.GrowingMaterialInput) (bool, error) {
+func (r *mutationResolver) UpdateGrowingMaterial(ctx context.Context, id string, update model.GrowingMaterialInput) (bool, error) {
 	pool := r.DBPool
-	result := db.UpdateGrowingMaterial(id, growingMaterial, ctx, pool)
+	result := db.UpdateGrowingMaterial(id, update, ctx, pool)
 	return result == nil, result
 }
 
@@ -102,11 +102,11 @@ func (r *mutationResolver) CreateGatheringPlace(ctx context.Context, gatheringPl
 }
 
 // UpdateGatheringPlace is the resolver for the updateGatheringPlace field.
-func (r *mutationResolver) UpdateGatheringPlace(ctx context.Context, id string, gatheringPlace *model.GatheringPlaceInput) (bool, error) {
+func (r *mutationResolver) UpdateGatheringPlace(ctx context.Context, id string, update *model.GatheringPlaceInput) (bool, error) {
 	pool := r.DBPool
 	var input = model.GatheringPlaceInput{}
-	if gatheringPlace != nil {
-		input = *gatheringPlace
+	if update != nil {
+		input = *update
 	}
 	result := db.UpdateGatheringPlace(id, input, ctx, pool)
 	return result == nil, result

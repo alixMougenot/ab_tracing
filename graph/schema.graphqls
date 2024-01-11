@@ -71,7 +71,7 @@ type GrowingMaterial {
   unit: String!
   creationDate: Time!
 
-  productionSteps: [ID!]!
+  homeProductionIngredients: [ID!]!
 
   aquisitionType: AquisitionType!
   aquisitionPlaces: [ID!]!
@@ -88,7 +88,7 @@ input GrowingMaterialInput {
   unit: String
   creationDate: Time
 
-  productionSteps: [ID!]
+  homeProductionIngredients: [ID!]
 
   aquisitionType: AquisitionType
   aquisitionPlaces: [ID!]
@@ -146,7 +146,7 @@ type PlantReproductionMaterial {
   aquisitionType: AquisitionType!
 
   # Grown
-  germinationSource: PlantReproductionMaterial
+  germinationSource: ID
 
   # Harvested
   harvestSource: [ID!]!
@@ -195,7 +195,7 @@ type Plant {
   aquisitionType: AquisitionType!
 
   # Grown
-  plantingSource: PlantReproductionMaterial
+  plantingSource: ID
 
   # Aquired
   aquisitionPlaces: [ID!]!
@@ -251,7 +251,7 @@ type Query {
 
 type Mutation {
   createPlant(plant: PlantInput!): ID!
-  updatePlant(id: ID!, plant: PlantInput): Boolean!
+  updatePlant(id: ID!, update: PlantInput): Boolean!
   deletePlant(id: ID!): Boolean!
 
   createPlantReproductionMaterial(
@@ -268,14 +268,11 @@ type Mutation {
   deletePlantTreatment(id: ID!): Boolean!
 
   createGrowingMaterial(growingMaterial: GrowingMaterialInput!): ID!
-  updateGrowingMaterial(
-    id: ID!
-    growingMaterial: GrowingMaterialInput!
-  ): Boolean!
+  updateGrowingMaterial(id: ID!, update: GrowingMaterialInput!): Boolean!
   deleteGrowingMaterial(id: ID!): Boolean!
 
   createGatheringPlace(gatheringPlace: GatheringPlaceInput!): ID!
-  updateGatheringPlace(id: ID!, gatheringPlace: GatheringPlaceInput): Boolean!
+  updateGatheringPlace(id: ID!, update: GatheringPlaceInput): Boolean!
   deleteGatheringPlace(id: ID!): Boolean!
 
   createSupplyInfo(supplyInfo: SupplyInfoInput!): ID!

@@ -26,7 +26,7 @@ func CreateGatheringPlace(info model.GatheringPlaceInput, ctx context.Context, p
 	}
 
 	row := pool.QueryRow(ctx, `INSERT INTO public.gathering_place 
-	(\"name\", notes, address, country, is_organic_compliant)
+	(name, notes, address, country, is_organic_compliant)
 	VALUES ($1, $2, $3, $4, $5) RETURNING id`,
 		info.Name, info.Notes, info.Address, info.Country, info.IsOrganicCompliant)
 
@@ -85,14 +85,14 @@ func UpdateGatheringPlace(id string, info model.GatheringPlaceInput, ctx context
 }
 
 func DeleteGatheringPlace(id string, ctx context.Context, pool *pgxpool.Pool) error {
-	_, err := pool.Exec(ctx, "DELETE FROM public.gathering_place WHERE id = $1", id)
+	_, err := pool.Exec(ctx, "DELETE FROM public.gather_places WHERE id = $1", id)
 	return err
 }
 
 func GetGatheringPlace(id string, ctx context.Context, pool *pgxpool.Pool) (*model.GatheringPlace, error) {
 	row := pool.QueryRow(ctx, `SELECT 
-		\"name\", notes, address, country, is_organic_compliant
-		FROM public.gathering_place WHERE id = $1`, id)
+		"name", notes, address, country, is_organic_compatible
+		FROM public.gather_places WHERE id = $1`, id)
 
 	var ret model.GatheringPlace
 	err := row.Scan(&ret.Name, &ret.Notes, &ret.Address, &ret.Country, &ret.IsOrganicCompliant)
@@ -106,8 +106,8 @@ func GetGatheringPlace(id string, ctx context.Context, pool *pgxpool.Pool) (*mod
 
 func ListGatheringPlaces(ctx context.Context, pool *pgxpool.Pool) ([]*model.GatheringPlace, error) {
 	rows, err := pool.Query(ctx, `SELECT 
-		\"name\", notes, address, country, is_organic_compliant
-		FROM public.gathering_place`)
+		"name", notes, address, country, is_organic_compatible
+		FROM public.gather_places`)
 	if err != nil {
 		return nil, err
 	}

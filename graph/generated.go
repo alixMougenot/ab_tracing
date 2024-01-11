@@ -58,18 +58,18 @@ type ComplexityRoot struct {
 	}
 
 	GrowingMaterial struct {
-		AquisitionPlaces       func(childComplexity int) int
-		AquisitionPurshaseInfo func(childComplexity int) int
-		AquisitionType         func(childComplexity int) int
-		CreationDate           func(childComplexity int) int
-		ID                     func(childComplexity int) int
-		IsOrganicCompliant     func(childComplexity int) int
-		Name                   func(childComplexity int) int
-		Notes                  func(childComplexity int) int
-		ProductionSteps        func(childComplexity int) int
-		Quantity               func(childComplexity int) int
-		Unit                   func(childComplexity int) int
-		Visibility             func(childComplexity int) int
+		AquisitionPlaces          func(childComplexity int) int
+		AquisitionPurshaseInfo    func(childComplexity int) int
+		AquisitionType            func(childComplexity int) int
+		CreationDate              func(childComplexity int) int
+		HomeProductionIngredients func(childComplexity int) int
+		ID                        func(childComplexity int) int
+		IsOrganicCompliant        func(childComplexity int) int
+		Name                      func(childComplexity int) int
+		Notes                     func(childComplexity int) int
+		Quantity                  func(childComplexity int) int
+		Unit                      func(childComplexity int) int
+		Visibility                func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -85,9 +85,9 @@ type ComplexityRoot struct {
 		DeletePlantReproductionMaterial func(childComplexity int, id string) int
 		DeletePlantTreatment            func(childComplexity int, id string) int
 		DeleteSupplyInfo                func(childComplexity int, id string) int
-		UpdateGatheringPlace            func(childComplexity int, id string, gatheringPlace *model.GatheringPlaceInput) int
-		UpdateGrowingMaterial           func(childComplexity int, id string, growingMaterial model.GrowingMaterialInput) int
-		UpdatePlant                     func(childComplexity int, id string, plant *model.PlantInput) int
+		UpdateGatheringPlace            func(childComplexity int, id string, update *model.GatheringPlaceInput) int
+		UpdateGrowingMaterial           func(childComplexity int, id string, update model.GrowingMaterialInput) int
+		UpdatePlant                     func(childComplexity int, id string, update *model.PlantInput) int
 		UpdatePlantReproductionMaterial func(childComplexity int, id string, update model.PlantReproductionMaterialInput) int
 		UpdatePlantTreatment            func(childComplexity int, id string, update model.PlantTreatmentInput) int
 		UpdateSupplyInfo                func(childComplexity int, id string, udpate model.SupplyInfoInput) int
@@ -175,7 +175,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreatePlant(ctx context.Context, plant model.PlantInput) (string, error)
-	UpdatePlant(ctx context.Context, id string, plant *model.PlantInput) (bool, error)
+	UpdatePlant(ctx context.Context, id string, update *model.PlantInput) (bool, error)
 	DeletePlant(ctx context.Context, id string) (bool, error)
 	CreatePlantReproductionMaterial(ctx context.Context, plantReproductionMaterial model.PlantReproductionMaterialInput) (string, error)
 	UpdatePlantReproductionMaterial(ctx context.Context, id string, update model.PlantReproductionMaterialInput) (bool, error)
@@ -184,10 +184,10 @@ type MutationResolver interface {
 	UpdatePlantTreatment(ctx context.Context, id string, update model.PlantTreatmentInput) (bool, error)
 	DeletePlantTreatment(ctx context.Context, id string) (bool, error)
 	CreateGrowingMaterial(ctx context.Context, growingMaterial model.GrowingMaterialInput) (string, error)
-	UpdateGrowingMaterial(ctx context.Context, id string, growingMaterial model.GrowingMaterialInput) (bool, error)
+	UpdateGrowingMaterial(ctx context.Context, id string, update model.GrowingMaterialInput) (bool, error)
 	DeleteGrowingMaterial(ctx context.Context, id string) (bool, error)
 	CreateGatheringPlace(ctx context.Context, gatheringPlace model.GatheringPlaceInput) (string, error)
-	UpdateGatheringPlace(ctx context.Context, id string, gatheringPlace *model.GatheringPlaceInput) (bool, error)
+	UpdateGatheringPlace(ctx context.Context, id string, update *model.GatheringPlaceInput) (bool, error)
 	DeleteGatheringPlace(ctx context.Context, id string) (bool, error)
 	CreateSupplyInfo(ctx context.Context, supplyInfo model.SupplyInfoInput) (string, error)
 	UpdateSupplyInfo(ctx context.Context, id string, udpate model.SupplyInfoInput) (bool, error)
@@ -297,6 +297,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GrowingMaterial.CreationDate(childComplexity), true
 
+	case "GrowingMaterial.homeProductionIngredients":
+		if e.complexity.GrowingMaterial.HomeProductionIngredients == nil {
+			break
+		}
+
+		return e.complexity.GrowingMaterial.HomeProductionIngredients(childComplexity), true
+
 	case "GrowingMaterial.id":
 		if e.complexity.GrowingMaterial.ID == nil {
 			break
@@ -324,13 +331,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GrowingMaterial.Notes(childComplexity), true
-
-	case "GrowingMaterial.productionSteps":
-		if e.complexity.GrowingMaterial.ProductionSteps == nil {
-			break
-		}
-
-		return e.complexity.GrowingMaterial.ProductionSteps(childComplexity), true
 
 	case "GrowingMaterial.quantity":
 		if e.complexity.GrowingMaterial.Quantity == nil {
@@ -507,7 +507,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGatheringPlace(childComplexity, args["id"].(string), args["gatheringPlace"].(*model.GatheringPlaceInput)), true
+		return e.complexity.Mutation.UpdateGatheringPlace(childComplexity, args["id"].(string), args["update"].(*model.GatheringPlaceInput)), true
 
 	case "Mutation.updateGrowingMaterial":
 		if e.complexity.Mutation.UpdateGrowingMaterial == nil {
@@ -519,7 +519,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGrowingMaterial(childComplexity, args["id"].(string), args["growingMaterial"].(model.GrowingMaterialInput)), true
+		return e.complexity.Mutation.UpdateGrowingMaterial(childComplexity, args["id"].(string), args["update"].(model.GrowingMaterialInput)), true
 
 	case "Mutation.updatePlant":
 		if e.complexity.Mutation.UpdatePlant == nil {
@@ -531,7 +531,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdatePlant(childComplexity, args["id"].(string), args["plant"].(*model.PlantInput)), true
+		return e.complexity.Mutation.UpdatePlant(childComplexity, args["id"].(string), args["update"].(*model.PlantInput)), true
 
 	case "Mutation.updatePlantReproductionMaterial":
 		if e.complexity.Mutation.UpdatePlantReproductionMaterial == nil {
@@ -1370,14 +1370,14 @@ func (ec *executionContext) field_Mutation_updateGatheringPlace_args(ctx context
 	}
 	args["id"] = arg0
 	var arg1 *model.GatheringPlaceInput
-	if tmp, ok := rawArgs["gatheringPlace"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gatheringPlace"))
+	if tmp, ok := rawArgs["update"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("update"))
 		arg1, err = ec.unmarshalOGatheringPlaceInput2ᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐGatheringPlaceInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["gatheringPlace"] = arg1
+	args["update"] = arg1
 	return args, nil
 }
 
@@ -1394,14 +1394,14 @@ func (ec *executionContext) field_Mutation_updateGrowingMaterial_args(ctx contex
 	}
 	args["id"] = arg0
 	var arg1 model.GrowingMaterialInput
-	if tmp, ok := rawArgs["growingMaterial"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("growingMaterial"))
+	if tmp, ok := rawArgs["update"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("update"))
 		arg1, err = ec.unmarshalNGrowingMaterialInput2githubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐGrowingMaterialInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["growingMaterial"] = arg1
+	args["update"] = arg1
 	return args, nil
 }
 
@@ -1466,14 +1466,14 @@ func (ec *executionContext) field_Mutation_updatePlant_args(ctx context.Context,
 	}
 	args["id"] = arg0
 	var arg1 *model.PlantInput
-	if tmp, ok := rawArgs["plant"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plant"))
+	if tmp, ok := rawArgs["update"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("update"))
 		arg1, err = ec.unmarshalOPlantInput2ᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["plant"] = arg1
+	args["update"] = arg1
 	return args, nil
 }
 
@@ -2254,8 +2254,8 @@ func (ec *executionContext) fieldContext_GrowingMaterial_creationDate(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _GrowingMaterial_productionSteps(ctx context.Context, field graphql.CollectedField, obj *model.GrowingMaterial) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GrowingMaterial_productionSteps(ctx, field)
+func (ec *executionContext) _GrowingMaterial_homeProductionIngredients(ctx context.Context, field graphql.CollectedField, obj *model.GrowingMaterial) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GrowingMaterial_homeProductionIngredients(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2268,7 +2268,7 @@ func (ec *executionContext) _GrowingMaterial_productionSteps(ctx context.Context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ProductionSteps, nil
+		return obj.HomeProductionIngredients, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2285,7 +2285,7 @@ func (ec *executionContext) _GrowingMaterial_productionSteps(ctx context.Context
 	return ec.marshalNID2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GrowingMaterial_productionSteps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GrowingMaterial_homeProductionIngredients(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GrowingMaterial",
 		Field:      field,
@@ -2499,7 +2499,7 @@ func (ec *executionContext) _Mutation_updatePlant(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePlant(rctx, fc.Args["id"].(string), fc.Args["plant"].(*model.PlantInput))
+		return ec.resolvers.Mutation().UpdatePlant(rctx, fc.Args["id"].(string), fc.Args["update"].(*model.PlantInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2994,7 +2994,7 @@ func (ec *executionContext) _Mutation_updateGrowingMaterial(ctx context.Context,
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateGrowingMaterial(rctx, fc.Args["id"].(string), fc.Args["growingMaterial"].(model.GrowingMaterialInput))
+		return ec.resolvers.Mutation().UpdateGrowingMaterial(rctx, fc.Args["id"].(string), fc.Args["update"].(model.GrowingMaterialInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3159,7 +3159,7 @@ func (ec *executionContext) _Mutation_updateGatheringPlace(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateGatheringPlace(rctx, fc.Args["id"].(string), fc.Args["gatheringPlace"].(*model.GatheringPlaceInput))
+		return ec.resolvers.Mutation().UpdateGatheringPlace(rctx, fc.Args["id"].(string), fc.Args["update"].(*model.GatheringPlaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3924,9 +3924,9 @@ func (ec *executionContext) _Plant_plantingSource(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.PlantReproductionMaterial)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOPlantReproductionMaterial2ᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantReproductionMaterial(ctx, field.Selections, res)
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Plant_plantingSource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3936,41 +3936,7 @@ func (ec *executionContext) fieldContext_Plant_plantingSource(ctx context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_PlantReproductionMaterial_id(ctx, field)
-			case "name":
-				return ec.fieldContext_PlantReproductionMaterial_name(ctx, field)
-			case "latinName":
-				return ec.fieldContext_PlantReproductionMaterial_latinName(ctx, field)
-			case "type":
-				return ec.fieldContext_PlantReproductionMaterial_type(ctx, field)
-			case "visibility":
-				return ec.fieldContext_PlantReproductionMaterial_visibility(ctx, field)
-			case "notes":
-				return ec.fieldContext_PlantReproductionMaterial_notes(ctx, field)
-			case "isOrganic":
-				return ec.fieldContext_PlantReproductionMaterial_isOrganic(ctx, field)
-			case "productionDate":
-				return ec.fieldContext_PlantReproductionMaterial_productionDate(ctx, field)
-			case "quantity":
-				return ec.fieldContext_PlantReproductionMaterial_quantity(ctx, field)
-			case "unit":
-				return ec.fieldContext_PlantReproductionMaterial_unit(ctx, field)
-			case "aquisitionType":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionType(ctx, field)
-			case "germinationSource":
-				return ec.fieldContext_PlantReproductionMaterial_germinationSource(ctx, field)
-			case "harvestSource":
-				return ec.fieldContext_PlantReproductionMaterial_harvestSource(ctx, field)
-			case "aquisitionPlaces":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionPlaces(ctx, field)
-			case "aquisitionPurshaseInfo":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionPurshaseInfo(ctx, field)
-			case "treatmentSteps":
-				return ec.fieldContext_PlantReproductionMaterial_treatmentSteps(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PlantReproductionMaterial", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4700,9 +4666,9 @@ func (ec *executionContext) _PlantReproductionMaterial_germinationSource(ctx con
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.PlantReproductionMaterial)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOPlantReproductionMaterial2ᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐPlantReproductionMaterial(ctx, field.Selections, res)
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PlantReproductionMaterial_germinationSource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4712,41 +4678,7 @@ func (ec *executionContext) fieldContext_PlantReproductionMaterial_germinationSo
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_PlantReproductionMaterial_id(ctx, field)
-			case "name":
-				return ec.fieldContext_PlantReproductionMaterial_name(ctx, field)
-			case "latinName":
-				return ec.fieldContext_PlantReproductionMaterial_latinName(ctx, field)
-			case "type":
-				return ec.fieldContext_PlantReproductionMaterial_type(ctx, field)
-			case "visibility":
-				return ec.fieldContext_PlantReproductionMaterial_visibility(ctx, field)
-			case "notes":
-				return ec.fieldContext_PlantReproductionMaterial_notes(ctx, field)
-			case "isOrganic":
-				return ec.fieldContext_PlantReproductionMaterial_isOrganic(ctx, field)
-			case "productionDate":
-				return ec.fieldContext_PlantReproductionMaterial_productionDate(ctx, field)
-			case "quantity":
-				return ec.fieldContext_PlantReproductionMaterial_quantity(ctx, field)
-			case "unit":
-				return ec.fieldContext_PlantReproductionMaterial_unit(ctx, field)
-			case "aquisitionType":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionType(ctx, field)
-			case "germinationSource":
-				return ec.fieldContext_PlantReproductionMaterial_germinationSource(ctx, field)
-			case "harvestSource":
-				return ec.fieldContext_PlantReproductionMaterial_harvestSource(ctx, field)
-			case "aquisitionPlaces":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionPlaces(ctx, field)
-			case "aquisitionPurshaseInfo":
-				return ec.fieldContext_PlantReproductionMaterial_aquisitionPurshaseInfo(ctx, field)
-			case "treatmentSteps":
-				return ec.fieldContext_PlantReproductionMaterial_treatmentSteps(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PlantReproductionMaterial", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5988,8 +5920,8 @@ func (ec *executionContext) fieldContext_Query_growingMaterials(ctx context.Cont
 				return ec.fieldContext_GrowingMaterial_unit(ctx, field)
 			case "creationDate":
 				return ec.fieldContext_GrowingMaterial_creationDate(ctx, field)
-			case "productionSteps":
-				return ec.fieldContext_GrowingMaterial_productionSteps(ctx, field)
+			case "homeProductionIngredients":
+				return ec.fieldContext_GrowingMaterial_homeProductionIngredients(ctx, field)
 			case "aquisitionType":
 				return ec.fieldContext_GrowingMaterial_aquisitionType(ctx, field)
 			case "aquisitionPlaces":
@@ -6055,8 +5987,8 @@ func (ec *executionContext) fieldContext_Query_growingMaterial(ctx context.Conte
 				return ec.fieldContext_GrowingMaterial_unit(ctx, field)
 			case "creationDate":
 				return ec.fieldContext_GrowingMaterial_creationDate(ctx, field)
-			case "productionSteps":
-				return ec.fieldContext_GrowingMaterial_productionSteps(ctx, field)
+			case "homeProductionIngredients":
+				return ec.fieldContext_GrowingMaterial_homeProductionIngredients(ctx, field)
 			case "aquisitionType":
 				return ec.fieldContext_GrowingMaterial_aquisitionType(ctx, field)
 			case "aquisitionPlaces":
@@ -8599,7 +8531,7 @@ func (ec *executionContext) unmarshalInputGrowingMaterialInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "notes", "visibility", "isOrganicCompliant", "quantity", "unit", "creationDate", "productionSteps", "aquisitionType", "aquisitionPlaces", "aquisitionPurshaseInfo"}
+	fieldsInOrder := [...]string{"name", "notes", "visibility", "isOrganicCompliant", "quantity", "unit", "creationDate", "homeProductionIngredients", "aquisitionType", "aquisitionPlaces", "aquisitionPurshaseInfo"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8655,13 +8587,13 @@ func (ec *executionContext) unmarshalInputGrowingMaterialInput(ctx context.Conte
 				return it, err
 			}
 			it.CreationDate = data
-		case "productionSteps":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productionSteps"))
+		case "homeProductionIngredients":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("homeProductionIngredients"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ProductionSteps = data
+			it.HomeProductionIngredients = data
 		case "aquisitionType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("aquisitionType"))
 			data, err := ec.unmarshalOAquisitionType2ᚖgithubᚗcomᚋalixMougenotᚋab_tracingᚋgraphᚋmodelᚐAquisitionType(ctx, v)
@@ -9252,8 +9184,8 @@ func (ec *executionContext) _GrowingMaterial(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "productionSteps":
-			out.Values[i] = ec._GrowingMaterial_productionSteps(ctx, field, obj)
+		case "homeProductionIngredients":
+			out.Values[i] = ec._GrowingMaterial_homeProductionIngredients(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
