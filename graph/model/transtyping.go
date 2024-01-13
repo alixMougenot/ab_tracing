@@ -18,11 +18,11 @@ func (r ReproductiveMaterialType) ToPG() (string, error) {
 func (r *ReproductiveMaterialType) FromPG(s string) error {
 	switch s {
 	case "seed":
-		return r.UnmarshalGQL(ReproductiveMaterialTypeSeed)
+		return r.UnmarshalGQL(ReproductiveMaterialTypeSeed.String())
 	case "cutting":
-		return r.UnmarshalGQL(ReproductiveMaterialTypeCutting)
+		return r.UnmarshalGQL(ReproductiveMaterialTypeCutting.String())
 	case "graft":
-		return r.UnmarshalGQL(ReproductiveMaterialTypeGrafting)
+		return r.UnmarshalGQL(ReproductiveMaterialTypeGrafting.String())
 	default:
 		return fmt.Errorf("unknown reproductive material type %s", s)
 	}
@@ -46,13 +46,13 @@ func (a AquisitionType) ToPG() (string, error) {
 func (a *AquisitionType) FromPG(s string) error {
 	switch s {
 	case "gathered":
-		return a.UnmarshalGQL(AquisitionTypeGathered)
+		return a.UnmarshalGQL(AquisitionTypeGathered.String())
 	case "grown":
-		return a.UnmarshalGQL(AquisitionTypeGrown)
+		return a.UnmarshalGQL(AquisitionTypeGrown.String())
 	case "bought":
-		return a.UnmarshalGQL(AquisitionTypePurchased)
+		return a.UnmarshalGQL(AquisitionTypePurchased.String())
 	case "home_made":
-		return a.UnmarshalGQL(AquisitionTypeHomeMade)
+		return a.UnmarshalGQL(AquisitionTypeHomeMade.String())
 	default:
 		return fmt.Errorf("unknown aquisition type %s", s)
 	}
@@ -72,9 +72,9 @@ func (v Visibility) ToPG() (string, error) {
 func (v *Visibility) FromPG(s string) error {
 	switch s {
 	case "internal":
-		return v.UnmarshalGQL(VisibilityInternal)
+		return v.UnmarshalGQL(VisibilityInternal.String())
 	case "public_facing":
-		return v.UnmarshalGQL(VisibilityPublicFacing)
+		return v.UnmarshalGQL(VisibilityPublicFacing.String())
 	default:
 		return fmt.Errorf("unknown visibility %s", s)
 	}
