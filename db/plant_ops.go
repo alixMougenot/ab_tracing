@@ -3,18 +3,31 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func CreatePlant(info model.PlantInput, ctx context.Context, pool *pgxpool.Pool) (string, error) {
+	var visibility string
+	var aquisitionType string
+	var err error
+
 	if info.AquisitionType == nil {
 		return "", fmt.Errorf("aquisitionType cannot be nil")
+	} else {
+		aquisitionType, err = model.AquisitionType.ToPG(*info.AquisitionType)
+		if err != nil {
+			return "", err
+		}
 	}
 	if info.Visibility == nil {
 		return "", fmt.Errorf("visibility cannot be nil")
+	} else {
+		visibility, err = model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return "", err
+		}
 	}
 	if info.TreatmentSteps == nil {
 		return "", fmt.Errorf("treatmentSteps cannot be nil")
@@ -53,14 +66,14 @@ func CreatePlant(info model.PlantInput, ctx context.Context, pool *pgxpool.Pool)
 	quantity, notes, aquisition_places, aquisition_bought, is_stock_plant,
 	"name", is_organic, unit)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`,
-		strings.ToLower(info.AquisitionType.String()), strings.ToLower(info.Visibility.String()),
+		aquisitionType, visibility,
 		info.PlantingSource, info.GraftingSteps,
 		info.MaturationSteps, info.TreatmentSteps, info.PlantingDate, info.LatinName,
 		info.Quantity, info.Notes, info.AquisitionPlaces, info.AquisitionPurshaseInfo, info.IsStockPlant,
 		info.Name, info.IsOrganic, info.Unit)
 
 	var id string
-	err := row.Scan(&id)
+	err = row.Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -76,12 +89,20 @@ func UpdatePlant(id string, info model.PlantInput, ctx context.Context, pool *pg
 
 	if info.AquisitionType != nil {
 		query += fmt.Sprintf(" aquisition_type = $%d,", i)
-		args = append(args, strings.ToLower(info.AquisitionType.String()))
+		aquisitionType, err := model.AquisitionType.ToPG(*info.AquisitionType)
+		if err != nil {
+			return err
+		}
+		args = append(args, aquisitionType)
 		i++
 	}
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, strings.ToLower(info.Visibility.String()))
+		visibility, err := model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return err
+		}
+		args = append(args, visibility)
 		i++
 	}
 	if info.PlantingSource != nil {
@@ -192,12 +213,12 @@ func GetPlant(id string, ctx context.Context, pool *pgxpool.Pool) (*model.Plant,
 		return nil, err
 	}
 
-	err = plant.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+	err = plant.Visibility.FromPG(visibility)
 	if err != nil {
 		return nil, err
 	}
 
-	err = plant.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
+	err = plant.AquisitionType.FromPG(aquisitionType)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +232,8 @@ func ListPlant(ctx context.Context, pool *pgxpool.Pool) ([]*model.Plant, error) 
 	maturation_sources, treatment_sources, planting_date, name_latin,
 	quantity, notes, aquisition_places, aquisition_bought, is_stock_plant,
 	"name", is_organic, unit
-	FROM public.plant`)
+	FROM public.plant 
+	ORDER BY planting_date DESC;`)
 	if err != nil {
 		return nil, err
 	}
@@ -230,12 +252,12 @@ func ListPlant(ctx context.Context, pool *pgxpool.Pool) ([]*model.Plant, error) 
 			return nil, err
 		}
 
-		err = plant.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+		err = plant.Visibility.FromPG(visibility)
 		if err != nil {
 			return nil, err
 		}
 
-		err = plant.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
+		err = plant.AquisitionType.FromPG(aquisitionType)
 		if err != nil {
 			return nil, err
 		}

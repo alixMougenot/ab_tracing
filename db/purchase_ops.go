@@ -3,15 +3,22 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func CreateSupplyInfo(info model.SupplyInfoInput, ctx context.Context, pool *pgxpool.Pool) (string, error) {
+	var err error
+	var visibility string
+
 	if info.Visibility == nil {
 		return "", fmt.Errorf("visibility cannot be nil")
+	} else {
+		visibility, err = model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return "", err
+		}
 	}
 	if info.Name == nil {
 		return "", fmt.Errorf("name cannot be nil")
@@ -32,11 +39,11 @@ func CreateSupplyInfo(info model.SupplyInfoInput, ctx context.Context, pool *pgx
 	row := pool.QueryRow(ctx, `INSERT INTO public.supply_info 
 	(visibility, "name", country, supplier, bill_link, notes)
 	VALUES ($1, $2, $3, $4, $5, $6)
-	RETURNING id`, strings.ToLower(info.Visibility.String()),
+	RETURNING id`, visibility,
 		info.Name, info.Country, info.Supplier, info.Bill, info.Notes)
 
 	var retid = ""
-	err := row.Scan(&retid)
+	err = row.Scan(&retid)
 
 	if err != nil {
 		return "", err
@@ -53,7 +60,11 @@ func UpdateSupplyInfo(id string, info model.SupplyInfoInput, ctx context.Context
 
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, strings.ToLower(info.Visibility.String()))
+		visibility, err := model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return err
+		}
+		args = append(args, visibility)
 		i++
 	}
 	if info.Name != nil {
@@ -109,7 +120,7 @@ func GetSupplyInfo(id string, ctx context.Context, pool *pgxpool.Pool) (*model.S
 		return nil, err
 	}
 
-	err = ret.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+	err = ret.Visibility.FromPG(visibility)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +129,7 @@ func GetSupplyInfo(id string, ctx context.Context, pool *pgxpool.Pool) (*model.S
 }
 
 func ListSupplyInfos(ctx context.Context, pool *pgxpool.Pool) ([]*model.SupplyInfo, error) {
-	rows, err := pool.Query(ctx, "SELECT id, visibility, \"name\", country, supplier, bill_link, notes FROM public.supply_info")
+	rows, err := pool.Query(ctx, "SELECT id, visibility, \"name\", country, supplier, bill_link, notes FROM public.supply_info ORDER BY id DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +143,7 @@ func ListSupplyInfos(ctx context.Context, pool *pgxpool.Pool) ([]*model.SupplyIn
 		if err != nil {
 			return nil, err
 		}
-		err = tmp.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+		err = tmp.Visibility.FromPG(visibility)
 		if err != nil {
 			return nil, err
 		}

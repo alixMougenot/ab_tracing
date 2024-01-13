@@ -3,18 +3,31 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func CreatePlantReproductionMaterial(info model.PlantReproductionMaterialInput, ctx context.Context, pool *pgxpool.Pool) (string, error) {
+	var err error
+	var visibility string
+	var aquisitionType string
+
 	if info.AquisitionType == nil {
 		return "", fmt.Errorf("aquisitionType cannot be nil")
+	} else {
+		aquisitionType, err = model.AquisitionType.ToPG(*info.AquisitionType)
+		if err != nil {
+			return "", err
+		}
 	}
 	if info.Visibility == nil {
 		return "", fmt.Errorf("visibility cannot be nil")
+	} else {
+		visibility, err = model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return "", err
+		}
 	}
 	if info.GerminationSource == nil {
 		return "", fmt.Errorf("germinationSource cannot be nil")
@@ -62,12 +75,12 @@ func CreatePlantReproductionMaterial(info model.PlantReproductionMaterialInput, 
 	 "name", is_organic, unit, \"type\")
 	 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 	 RETURNING id`,
-		strings.ToLower(info.AquisitionType.String()), strings.ToLower(info.Visibility.String()), info.GerminationSource, info.TreatmentSteps, info.HarvestSource,
+		visibility, aquisitionType, info.GerminationSource, info.TreatmentSteps, info.HarvestSource,
 		info.ProductionDate, info.LatinName, info.Quantity, info.Notes, info.AquisitionPlaces, info.AquisitionPurshaseInfo,
 		info.Name, info.IsOrganic, info.Unit, info.Type)
 
 	var id string
-	err := row.Scan(&id)
+	err = row.Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -83,12 +96,20 @@ func UpdatePlantReproductionMaterial(id string, info model.PlantReproductionMate
 
 	if info.AquisitionType != nil {
 		query += fmt.Sprintf(" aquisition_type = $%d,", i)
-		args = append(args, strings.ToLower(info.AquisitionType.String()))
+		aquisitionType, err := model.AquisitionType.ToPG(*info.AquisitionType)
+		if err != nil {
+			return err
+		}
+		args = append(args, aquisitionType)
 		i++
 	}
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, strings.ToLower(info.Visibility.String()))
+		visibility, err := model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return err
+		}
+		args = append(args, visibility)
 		i++
 	}
 	if info.GerminationSource != nil {
@@ -191,12 +212,12 @@ func GetPlantReproductionMaterial(id string, ctx context.Context, pool *pgxpool.
 		return nil, err
 	}
 
-	err = data.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+	err = data.Visibility.FromPG(visibility)
 	if err != nil {
 		return nil, err
 	}
 
-	err = data.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
+	err = data.AquisitionType.FromPG(aquisitionType)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +229,9 @@ func ListPlantReproductionMaterials(ctx context.Context, pool *pgxpool.Pool) ([]
 	rows, err := pool.Query(ctx, `SELECT 
 	 id, aquisition_type, visibility, germination_source, treatment_steps, harvest_source,
 		production_date, name_latin, quantity, notes, aquisition_places, aquisition_bought,
-		"name", is_organic, unit, "type" FROM public.plant_reproduction_material`)
+		"name", is_organic, unit, "type" 
+		FROM public.plant_reproduction_material
+		ORDER BY production_date DESC;`)
 	if err != nil {
 		return nil, err
 	}
@@ -226,12 +249,12 @@ func ListPlantReproductionMaterials(ctx context.Context, pool *pgxpool.Pool) ([]
 			return nil, err
 		}
 
-		err = current.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+		err = current.Visibility.FromPG(visibility)
 		if err != nil {
 			return nil, err
 		}
 
-		err = current.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
+		err = current.AquisitionType.FromPG(aquisitionType)
 		if err != nil {
 			return nil, err
 		}

@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -29,13 +28,18 @@ func CreateGatheringPlace(info model.GatheringPlaceInput, ctx context.Context, p
 		return "", fmt.Errorf("visibility cannot be nil")
 	}
 
+	visibility, err := model.Visibility.ToPG(*info.Visibility)
+	if err != nil {
+		return "", err
+	}
+
 	row := pool.QueryRow(ctx, `INSERT INTO public.gathering_place 
 	(name, notes, address, country, is_organic_compliant, visibility)
 	VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-		info.Name, info.Notes, info.Address, info.Country, info.IsOrganicCompliant, strings.ToLower(info.Visibility.String()))
+		info.Name, info.Notes, info.Address, info.Country, info.IsOrganicCompliant, visibility)
 
 	var id string
-	err := row.Scan(&id)
+	err = row.Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -76,7 +80,11 @@ func UpdateGatheringPlace(id string, info model.GatheringPlaceInput, ctx context
 	}
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, strings.ToLower(info.Visibility.String()))
+		visibility, err := model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return err
+		}
+		args = append(args, visibility)
 		i++
 	}
 
@@ -110,7 +118,7 @@ func GetGatheringPlace(id string, ctx context.Context, pool *pgxpool.Pool) (*mod
 		return nil, err
 	}
 
-	err = ret.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+	err = ret.Visibility.FromPG(visibility)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +129,8 @@ func GetGatheringPlace(id string, ctx context.Context, pool *pgxpool.Pool) (*mod
 func ListGatheringPlaces(ctx context.Context, pool *pgxpool.Pool) ([]*model.GatheringPlace, error) {
 	rows, err := pool.Query(ctx, `SELECT 
 		"name", notes, address, country, is_organic_compatible, visibility
-		FROM public.gather_places`)
+		FROM public.gather_places
+		ORDER BY id DESC;`)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +145,7 @@ func ListGatheringPlaces(ctx context.Context, pool *pgxpool.Pool) ([]*model.Gath
 			return nil, err
 		}
 
-		err = tmp.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+		err = tmp.Visibility.FromPG(visibility)
 		if err != nil {
 			return nil, err
 		}

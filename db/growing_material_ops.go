@@ -3,13 +3,16 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/alixMougenot/ab_tracing/graph/model"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func CreateGrowingMaterial(info model.GrowingMaterialInput, ctx context.Context, pool *pgxpool.Pool) (string, error) {
+	var visibility string
+	var aquisitionType string
+	var err error
+
 	if info.Name == nil {
 		return "", fmt.Errorf("name cannot be nil")
 	}
@@ -18,6 +21,11 @@ func CreateGrowingMaterial(info model.GrowingMaterialInput, ctx context.Context,
 	}
 	if info.Visibility == nil {
 		return "", fmt.Errorf("visibility cannot be nil")
+	} else {
+		visibility, err = model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return "", err
+		}
 	}
 	if info.IsOrganicCompliant == nil {
 		return "", fmt.Errorf("isOrganicCompliant cannot be nil")
@@ -30,6 +38,11 @@ func CreateGrowingMaterial(info model.GrowingMaterialInput, ctx context.Context,
 	}
 	if info.AquisitionType == nil {
 		return "", fmt.Errorf("aquisitionType cannot be nil")
+	} else {
+		aquisitionType, err = model.AquisitionType.ToPG(*info.AquisitionType)
+		if err != nil {
+			return "", err
+		}
 	}
 	if info.AquisitionPlaces == nil {
 		return "", fmt.Errorf("aquisitionPlaces cannot be nil")
@@ -49,12 +62,12 @@ func CreateGrowingMaterial(info model.GrowingMaterialInput, ctx context.Context,
 	aquisition_type, aquisition_places, aquisition_bought, production_steps) 
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
 	RETURNING id`,
-		info.CreationDate, info.Name, info.Notes, strings.ToLower(info.Visibility.String()),
-		info.IsOrganicCompliant, info.Quantity, info.Unit, strings.ToLower(info.AquisitionType.String()),
+		info.CreationDate, info.Name, info.Notes, visibility,
+		info.IsOrganicCompliant, info.Quantity, info.Unit, aquisitionType,
 		info.AquisitionPlaces, info.AquisitionPurshaseInfo, info.HomeProductionIngredients)
 
 	var id string
-	err := row.Scan(&id)
+	err = row.Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -85,7 +98,11 @@ func UpdateGrowingMaterial(id string, info model.GrowingMaterialInput, ctx conte
 	}
 	if info.Visibility != nil {
 		query += fmt.Sprintf(" visibility = $%d,", i)
-		args = append(args, strings.ToLower(info.Visibility.String()))
+		visibility, err := model.Visibility.ToPG(*info.Visibility)
+		if err != nil {
+			return err
+		}
+		args = append(args, visibility)
 		i++
 	}
 	if info.IsOrganicCompliant != nil {
@@ -105,7 +122,11 @@ func UpdateGrowingMaterial(id string, info model.GrowingMaterialInput, ctx conte
 	}
 	if info.AquisitionType != nil {
 		query += fmt.Sprintf(" aquisition_type = $%d,", i)
-		args = append(args, strings.ToLower(info.AquisitionType.String()))
+		aquisition, err := model.AquisitionType.ToPG(*info.AquisitionType)
+		if err != nil {
+			return err
+		}
+		args = append(args, aquisition)
 		i++
 	}
 	if info.AquisitionPlaces != nil {
@@ -162,12 +183,12 @@ func GetGrowingMaterial(id string, ctx context.Context, pool *pgxpool.Pool) (*mo
 		return nil, err
 	}
 
-	err = growingMaterial.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+	err = growingMaterial.Visibility.FromPG(visibility)
 	if err != nil {
 		return nil, err
 	}
 
-	err = growingMaterial.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
+	err = growingMaterial.AquisitionType.FromPG(aquisitionType)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +200,8 @@ func ListGrowingMaterials(ctx context.Context, pool *pgxpool.Pool) ([]*model.Gro
 	rows, err := pool.Query(ctx, `SELECT 
 	id, creation_date, "name", notes, visibility, is_organic_compliant, quantity, unit,
 	aquisition_type, aquisition_places, aquisition_bought, production_steps 
-	FROM public.growing_material`)
+	FROM public.growing_material
+	ORDER BY creation_date DESC;`)
 	if err != nil {
 		return nil, err
 	}
@@ -199,12 +221,12 @@ func ListGrowingMaterials(ctx context.Context, pool *pgxpool.Pool) ([]*model.Gro
 			return nil, err
 		}
 
-		err = growingMaterial.Visibility.UnmarshalGQL(strings.ToUpper(visibility))
+		err = growingMaterial.Visibility.FromPG(visibility)
 		if err != nil {
 			return nil, err
 		}
 
-		err = growingMaterial.AquisitionType.UnmarshalGQL(strings.ToUpper(aquisitionType))
+		err = growingMaterial.AquisitionType.FromPG(aquisitionType)
 		if err != nil {
 			return nil, err
 		}
